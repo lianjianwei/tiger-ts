@@ -1,3 +1,4 @@
+export * from './cache-base';
 export * from './config-loader-base';
 export * from './file-factory-base';
 export * from './i-directory';
