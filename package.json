@@ -1,0 +1,37 @@
+{
+    "name": "tiger-ts",
+    "version": "0.1.0",
+    "description": "一个使用TypeScript写的Node.js基础库",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "test": "mocha -t 30s -r ./node_modules/ts-node/register/index.js --exit"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lianjianwei/tiger-ts.git"
+    },
+    "keywords": [
+        "ts"
+    ],
+    "author": "lianjianwei",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/lianjianwei/tiger-ts/issues"
+    },
+    "homepage": "https://github.com/lianjianwei/tiger-ts#readme",
+    "devDependencies": {
+        "@types/mocha": "^10.0.6",
+        "@types/node": "^18.16.1",
+        "mocha": "^10.4.0",
+        "reflect-metadata": "^0.2.2",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.4.5"
+    },
+    "engines": {
+        "node": ">= 18"
+    },
+    "dependencies": {
+        "yaml": "^2.4.5"
+    }
+}
