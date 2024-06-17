@@ -1,6 +1,6 @@
-import 'reflect-metadata';
+import { strictEqual } from 'assert';
 
-import { Api } from './decorator';
+import { Api, metedata } from './decorator';
 import { IApi } from '../../contract';
 
 // @ts-ignore
@@ -14,7 +14,7 @@ class TestApi implements IApi {
 describe('src/service/api/decortor.ts', () => {
     describe('@Api()', () => {
         it('ok', async () => {
-            console.log(TestApi);
+            strictEqual(metedata['/mh/login'], TestApi);
         });
     });
 });

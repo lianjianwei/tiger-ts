@@ -19,10 +19,13 @@ export class Mock<T> {
                 if (key in target)
                     return target[key];
 
+                if (key == 'then')
+                    return null;
+
                 return (...args: any[]) => {
                     const record = this.m_Records[key];
                     if (!record?.args?.length)
-                        throw new Error(`${key}未被调用`);
+                        throw new Error(key + '未被调用');
 
                     const recordArgs = record.args.shift();
                     deepStrictEqual(
