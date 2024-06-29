@@ -1,2 +1,10 @@
 # tiger-ts
-A Node.js base library written in TypeScript
+一个使用TypeScript写的Node.js基础库
+
+## 安装
+
+```
+npm install tiger-ts
+```
+
+## 使用

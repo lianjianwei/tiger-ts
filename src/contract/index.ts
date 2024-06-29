@@ -4,4 +4,5 @@ export * from './config-loader-base';
 export * from './db-factory-base';
 export * from './file-factory-base';
 export * from './i-api-port';
+export * from './i-value-service';
 export * from './type';
