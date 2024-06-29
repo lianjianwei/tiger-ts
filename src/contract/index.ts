@@ -2,6 +2,7 @@ export * from './api-factory-base';
 export * from './cache-base';
 export * from './config-loader-base';
 export * from './db-factory-base';
+export * from './enum-factory-base';
 export * from './file-factory-base';
 export * from './i-api-port';
 export * from './i-value-service';
