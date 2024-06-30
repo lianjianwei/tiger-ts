@@ -1,6 +1,6 @@
 import { notStrictEqual, strictEqual } from 'assert';
 
-import { MemoryCache as Self } from './cache';
+import { MemoryCache as Self } from './memory';
 
 describe('src/service/memory/cache.ts', () => {
     describe('.get<T>(key: string, fn: () => Promise<T> | T)', () => {
