@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "build": "tsc -p tsconfig.json",
+        "release": "npm run build && npm publish",
         "test": "mocha -t 30s -r ./node_modules/ts-node/register/index.js --exit"
     },
     "repository": {
