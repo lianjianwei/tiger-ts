@@ -1,8 +1,8 @@
 {
     "name": "tiger-ts",
-    "version": "0.2.0",
+    "version": "0.2.2",
     "description": "一个使用TypeScript写的Node.js服务端基础库",
-    "main": "index.js",
+    "main": "dist/index.js",
     "scripts": {
         "build": "tsc -p tsconfig.json",
         "release": "npm run build && npm publish",
