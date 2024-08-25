@@ -1,3 +1,5 @@
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import Koa from 'koa';
 import Router from 'koa-router';
 
@@ -5,6 +7,7 @@ import { KoaOption } from './option';
 import { CustomError } from '../error';
 import { ApiFactoryBase } from '../../contract';
 import { enum_ } from '../../model';
+import { model } from '../..';
 
 export function koaPostOption(apiFactory: ApiFactoryBase): KoaOption {
     return (app: Koa) => {
@@ -12,8 +15,15 @@ export function koaPostOption(apiFactory: ApiFactoryBase): KoaOption {
 
         router.post('/:endpoint/:api', async (ctx) => {
             try {
-                const api = apiFactory.build(ctx.request.path);
-                api.body = ctx.request.body;
+                const { api, validateType } = apiFactory.build(ctx.request.path);
+                if (validateType) {
+                    api.body = plainToInstance(validateType, ctx.request.body);
+                    const res = await validate(api.body);
+                    if (res.length)
+                        throw new CustomError(model.enum_.ErrorCode.invalidParams, res);
+                } else {
+                    api.body = ctx.request.body;
+                }
                 api.header = ctx.request.header;
                 ctx.body = {
                     err: enum_.ErrorCode.success,

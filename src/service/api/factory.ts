@@ -10,6 +10,9 @@ export class ApiFactory extends ApiFactoryBase {
         if (!metedata[route])
             throw new CustomError(enum_.ErrorCode.apiNotExists);
 
-        return Container.get<IApi>(metedata[route] as any);
+        return {
+            api: Container.get<IApi>(metedata[route].api),
+            validateType: metedata[route].validateType
+        };
     }
 }

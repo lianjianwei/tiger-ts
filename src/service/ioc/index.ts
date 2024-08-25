@@ -1,6 +1,6 @@
 import { Type } from '../../contract';
 
-export function getKey(typer: Type) {
+export function getKey<T = any>(typer: Type<T>) {
     return typer.ctor ?? typer.name;
 }
 

@@ -1,6 +1,6 @@
 {
     "name": "tiger-ts",
-    "version": "0.3.2",
+    "version": "0.4.2",
     "description": "一个使用TypeScript写的Node.js服务端基础库",
     "main": "dist/index.js",
     "scripts": {
@@ -37,6 +37,8 @@
     },
     "dependencies": {
         "@koa/cors": "^5.0.0",
+        "class-transformer": "^0.5.1",
+        "class-validator": "^0.14.1",
         "dayjs": "^1.11.11",
         "koa": "^2.15.3",
         "koa-bodyparser": "^4.4.1",

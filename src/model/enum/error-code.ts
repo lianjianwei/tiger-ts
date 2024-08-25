@@ -8,6 +8,10 @@ export enum ErrorCode {
      */
     apiNotExists = 501,
     /**
+     * 无效参数
+     */
+    invalidParams = 503,
+    /**
      * 服务器异常
      */
     serverInternal = 599

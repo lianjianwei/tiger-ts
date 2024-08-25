@@ -5,15 +5,10 @@
 
 1. API定义
     * koa
-2. 缓存模块
-    * 内存缓存
-    * 配置加载器缓存
-    * 枚举加载器缓存
+2. 内存缓存模块
 3. 配置加载器
     * yaml 文件配置加载器
-    * mongo 配置加载器
 4. 枚举工厂
-    * mongo 枚举加载器
 5. 文件工厂
     * IO文件工厂
 6. 数值服务
@@ -44,14 +39,18 @@ import './login';
 
 ```typescript
 // src/api/login.ts
+import { validate, IsLength } from 'class-validator';
 import { IApi, service } from 'tiger-ts';
 
-type LoginRequestBody = {
+class LoginRequestBody {
+    @IsLength(5, 10, { message: '账号长度在5-10字符' })
     account: string;
+
+    @IsLength(8, 18, { message: '密码长度在8-18字符' })
     password: string;
 }
 
-@service.Api('/mh/login')
+@service.Api({ route: '/mh/login', validateType: LoginRequestBody })
 @Service({ transient: true })
 export default class LoginApi implements IApi<LoginRequestBody> {
 

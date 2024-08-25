@@ -1,3 +1,5 @@
+import { Type } from './type';
+
 export interface IApi<TBody = any, THeader = any> {
     body?: TBody;
     header?: THeader;
@@ -6,5 +8,5 @@ export interface IApi<TBody = any, THeader = any> {
 }
 
 export abstract class ApiFactoryBase {
-    public abstract build(route: string): IApi;
+    public abstract build(route: string): { api: IApi; validateType: Type<any>; };
 }

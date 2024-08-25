@@ -1,6 +1,6 @@
 import { Type } from './type';
 
-export type MemoryCacheKey = string | number | Symbol | Type;
+export type MemoryCacheKey = string | number | Symbol | Type<any>;
 
 /**
  * 内存缓存
