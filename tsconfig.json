@@ -15,7 +15,7 @@
         "strict": true,
         "strictPropertyInitialization": false,
         "strictNullChecks": false,
-        "target": "ES6"
+        "target": "ESNext"
     },
     "exclude": [
         "node_modules",
