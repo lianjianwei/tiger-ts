@@ -1,12 +1,5 @@
 import { Type } from './type';
 
-export interface IEnumLoadHandler {
-    load<T extends EnumItem>(typer: Type<T>): Promise<{
-        allItem: { [value: number]: T; };
-        cacheOn: number;
-    }>;
-}
-
 export type EnumReduceFunction<T, R> = (memo: R, r: T) => R;
 
 export class EnumItem {
@@ -16,16 +9,27 @@ export class EnumItem {
 
 export interface IEnum<T extends EnumItem> {
     /**
-     * 所有数据
+     * 所有数据对象
      */
-    readonly allItem: Promise<{ [value: number]: T; }>;
+    readonly allItem: { [value: number]: T; };
+
+    /**
+     * 所有数据数组
+     */
+    readonly items: T[];
 
     /**
      * 获取聚合数据
      * 
      * @param reduceTyper
      */
-    getReduce<TReduce>(reduceTyper: Type<TReduce>): Promise<TReduce>;
+    getReduce<TReduce>(reduceTyper: Type<TReduce>): TReduce;
+
+    /**
+     * 更新数据
+     * @param allItem 数据
+     */
+    update(allItem: { [value: number]: T; }): void;
 }
 
 export abstract class EnumFactoryBase {

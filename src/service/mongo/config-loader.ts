@@ -1,4 +1,4 @@
-import ioc from '../ioc';
+import { ioc } from '../ioc';
 import { ConfigLoaderBase, DbFactoryBase, Type } from '../../contract';
 
 export class Config {

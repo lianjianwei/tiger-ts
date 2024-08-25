@@ -10,8 +10,6 @@ export class ApiFactory extends ApiFactoryBase {
         if (!metedata[route])
             throw new CustomError(enum_.ErrorCode.apiNotExists);
 
-        const instance = Container.get<IApi>(metedata[route] as any);
-        Container.remove(metedata[route] as any);
-        return instance;
+        return Container.get<IApi>(metedata[route] as any);
     }
 }

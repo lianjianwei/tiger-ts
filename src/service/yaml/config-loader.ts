@@ -1,11 +1,11 @@
 import yaml from 'yaml';
 
-import ioc from '../ioc';
+import { ioc } from '../ioc';
 import { ConfigLoaderBase, IFile, Type } from '../../contract';
 
 export class YamlConfigLoader extends ConfigLoaderBase {
 
-    private m_Content: Promise<{ [name: string]: Type<any>; }>;
+    private m_Content: Promise<{ [name: string]: any; }>;
 
     public constructor(
         private m_File: IFile

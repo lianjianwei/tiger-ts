@@ -6,10 +6,9 @@ import { ValueHandlerBase, ValueHandlerContext } from '../../contract';
  * 示例
  * ```typescript
  * const ownValue = {};
- * const uow: IUnitOfWork;
  * const valueHandler = new DefaultValueHandler();
  * const valueService = new ValueService(ownValue, valueHandler);
- * await valueService.update(uow, [ { count: 2, valueType: 1 } ]);
+ * valueService.update([ { count: 2, valueType: 1 } ]);
  * console.log(ownValue); // { 1: 2 }
  * ```
  */
@@ -18,6 +17,6 @@ export class DefaultValueHandler extends ValueHandlerBase {
         ctx.valueService.ownValue[ctx.value.valueType] ??= 0;
         ctx.valueService.ownValue[ctx.value.valueType] += ctx.value.count;
 
-        await this.next?.updateHandle(ctx);
+        this.next?.updateHandle(ctx);
     }
 }

@@ -7,7 +7,7 @@ import { enum_ } from '../../model';
 
 describe('src/service/value/filter-handler.ts', () => {
     describe('.updateHandle(ctx: ValueHandlerContext)', () => {
-        it('ok', async () => {
+        it('ok', () => {
             const mockEnumFactory = new Mock<EnumFactoryBase>();
             const self = new Self(mockEnumFactory.actual);
 
@@ -19,20 +19,19 @@ describe('src/service/value/filter-handler.ts', () => {
             });
 
             const mockEnum = new Mock<IEnum<enum_.ValueTypeData>>({
-                allItem: Promise.resolve({
+                allItem: {
                     1: {
                         value: 1,
                         isReplace: true
                     }
-                })
+                }
             });
             mockEnumFactory.exceptReturn(
                 r => r.build(enum_.ValueTypeData),
                 mockEnum.actual
             );
 
-            await self.updateHandle({
-                uow: null,
+            self.updateHandle({
                 value: {
                     valueType: 1,
                     count: 2

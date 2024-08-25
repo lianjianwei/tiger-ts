@@ -1,6 +1,6 @@
 import { MongoDbQuery } from './db-query';
 import { MongoUnitOfWork } from './unit-of-work';
-import ioc from '../ioc';
+import { ioc } from '../ioc';
 import { BuilderOption, DbFactoryBase, DbModel, IDbRepository } from '../../contract';
 
 export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {

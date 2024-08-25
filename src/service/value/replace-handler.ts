@@ -7,10 +7,9 @@ import { enum_ } from '../../model';
  * 示例
  * ```typescript
  * const ownValue = {};
- * const uow: IUnitOfWork;
  * const valueHandler = new ReplaceValueHandler();
  * const valueService = new ValueService(ownValue, valueHandler);
- * await valueService.update(uow, [ { count: 2, valueType: 1 } ]);
+ * valueService.update([ { count: 2, valueType: 1 } ]);
  * console.log(ownValue); // { 1: 0 }
  * ```
  */
@@ -22,11 +21,11 @@ export class ReplaceValueHandler extends ValueHandlerBase {
         super();
     }
 
-    public async updateHandle(ctx: ValueHandlerContext) {
-        const allItem = await this.m_EnumFactory.build(enum_.ValueTypeData).allItem;
+    public updateHandle(ctx: ValueHandlerContext) {
+        const allItem = this.m_EnumFactory.build(enum_.ValueTypeData).allItem;
         if (allItem[ctx.value.valueType]?.isReplace)
             ctx.valueService.ownValue[ctx.value.valueType] = 0;
 
-        await this.next?.updateHandle(ctx);
+        this.next?.updateHandle(ctx);
     }
 }

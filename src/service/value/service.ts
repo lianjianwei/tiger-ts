@@ -1,4 +1,4 @@
-import { Condition, IUnitOfWork, IValueService, OwnValue, Value, ValueHandlerBase } from '../../contract';
+import { Condition, IValueService, OwnValue, Value, ValueHandlerBase } from '../../contract';
 
 export class ValueService implements IValueService {
 
@@ -7,13 +7,13 @@ export class ValueService implements IValueService {
         private m_ValueHandler: ValueHandlerBase
     ) { }
 
-    public async checkCondition(uow: IUnitOfWork, conditions: Condition[][]) {
+    public checkCondition(conditions: Condition[][]) {
         if (!conditions || !conditions.length)
             return true;
 
-        const results = await Promise.all(conditions.map(async r => {
-            const res = await Promise.all(r.map(async cr => {
-                const count = await this.getCount(uow, cr.valueType);
+        const results = conditions.map(r => {
+            const res = r.map(cr => {
+                const count = this.getCount(cr.valueType);
                 switch (cr.op) {
                     case '>':
                         return count > cr.count;
@@ -26,13 +26,13 @@ export class ValueService implements IValueService {
                     default:
                         return count == cr.count;
                 }
-            }));
+            });
             return res.every(cr => cr);
-        }));
+        });
         return results.some(r => r);
     }
 
-    public async getCount(uow: IUnitOfWork, valueType: number) {
+    public getCount(valueType: number) {
         valueType = Number(valueType);
         if (isNaN(valueType))
             throw new Error(`无效的 valueType: [${valueType}]`);
@@ -42,8 +42,7 @@ export class ValueService implements IValueService {
             count: this.ownValue[valueType] ?? 0
         };
 
-        await this.m_ValueHandler?.getCountHandle({
-            uow: uow,
+        this.m_ValueHandler?.getCountHandle({
             value: value,
             valueService: this
         });
@@ -51,7 +50,7 @@ export class ValueService implements IValueService {
         return value.count;
     }
 
-    public async update(uow: IUnitOfWork, values: Value[]) {
+    public update(values: Value[]) {
         for (const r of values ?? []) {
             r.count = Number(r.count);
             r.valueType = Number(r.valueType);
@@ -60,8 +59,7 @@ export class ValueService implements IValueService {
             if (isNaN(r.valueType))
                 throw new Error(`无效的 value: ${JSON.stringify(r)}`);
 
-            await this.m_ValueHandler?.updateHandle({
-                uow: uow,
+            this.m_ValueHandler?.updateHandle({
                 value: r,
                 valueService: this
             });

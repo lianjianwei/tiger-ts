@@ -4,6 +4,6 @@ export function getKey(typer: Type) {
     return typer.ctor ?? typer.name;
 }
 
-export default {
+export const ioc = {
     getKey
 };
