@@ -52,6 +52,7 @@ type LoginRequestBody = {
 }
 
 @service.Api('/mh/login')
+@Service({ transient: true })
 export default class LoginApi implements IApi<LoginRequestBody> {
 
     public body: LoginRequestBody;
@@ -60,7 +61,7 @@ export default class LoginApi implements IApi<LoginRequestBody> {
         if (body.account == 'admin' && body.password == '123456')
             return true;
 
-        throw new service.CustomError(1000, '账号Miami错误');
+        throw new service.CustomError(1000, '账号密码错误');
     }
 }
 ```
