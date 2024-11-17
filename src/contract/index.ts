@@ -6,4 +6,5 @@ export * from './file-factory-base';
 export * from './i-api-port';
 export * from './i-value-service';
 export * from './memory-cache-base';
+export * from './parser-factory-base';
 export * from './type';
