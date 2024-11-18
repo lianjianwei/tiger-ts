@@ -7,10 +7,17 @@ export type Value = {
 };
 
 /**
+ * 奖励格式
+ */
+export type Reward = Value & {
+    weight: number;
+};
+
+/**
  * 条件格式
  */
 export type Condition = Value & {
-    op: '=' | '>' | '>=' | '<' | '<=';
+    op: '=' | '>' | '>=' | '<' | '<=' | '!=';
 };
 
 export type OwnValue = {

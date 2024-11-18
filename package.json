@@ -1,6 +1,6 @@
 {
     "name": "tiger-ts",
-    "version": "0.5.2",
+    "version": "0.6.2",
     "description": "一个使用TypeScript写的Node.js服务端基础库",
     "main": "dist/index.js",
     "scripts": {

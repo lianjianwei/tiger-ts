@@ -23,6 +23,8 @@ export class ValueService implements IValueService {
                         return count < cr.count;
                     case '<=':
                         return count <= cr.count;
+                    case '!=':
+                        return count != cr.count;
                     default:
                         return count == cr.count;
                 }

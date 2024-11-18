@@ -24,6 +24,13 @@
 11. 日志模块[未完成]
     * log4js 日志[未完成]
 12. 解析器
+    * number
+    * string
+    * bool
+    * json
+    * Value
+    * Reward
+    * Condition
 
 ## 安装
 

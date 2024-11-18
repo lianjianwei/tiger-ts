@@ -5,3 +5,14 @@ export class ValueTypeData extends EnumItem {
 
     public isReplace: boolean;
 }
+
+export class TextOfValueType {
+    public static ctor = 'TextOfValueType';
+
+    [text: string]: ValueTypeData;
+}
+
+export function textOfValueTypeReduce(memo: TextOfValueType, r: ValueTypeData) {
+    memo[r.text] = r;
+    return memo;
+}
