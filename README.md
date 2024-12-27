@@ -31,6 +31,7 @@
     * Value
     * Reward
     * Condition
+    * EnumValue
 
 ## 安装
 

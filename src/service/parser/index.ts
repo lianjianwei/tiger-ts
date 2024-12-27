@@ -1,5 +1,6 @@
 export * from './bool';
 export * from './condition';
+export * from './enum-value';
 export * from './factory';
 export * from './json';
 export * from './number';
