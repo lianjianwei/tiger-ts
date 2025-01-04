@@ -17,8 +17,10 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
     /**
      * 工作单元
      */
+    private m_Uow: MongoUnitOfWork;
     protected get uow() {
-        return (this.m_Opt.uow ?? this.m_DbFactory.uow()) as MongoUnitOfWork;
+        this.m_Uow ??= (this.m_Opt.uow ?? this.m_DbFactory.uow()) as MongoUnitOfWork;
+        return this.m_Uow;
     }
 
     public constructor(
