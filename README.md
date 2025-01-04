@@ -32,6 +32,8 @@
     * Reward
     * Condition
     * EnumValue
+13. 字符串生成器
+    * Mongo ObjectId 生成器
 
 ## 安装
 
@@ -48,14 +50,14 @@ import './login';
 
 ```typescript
 // src/api/login.ts
-import { validate, IsLength } from 'class-validator';
+import { Length } from 'class-validator';
 import { IApi, service } from 'tiger-ts';
 
 class LoginRequestBody {
-    @IsLength(5, 10, { message: '账号长度在5-10字符' })
+    @Length(5, 10, { message: '账号长度在5-10字符' })
     account: string;
 
-    @IsLength(8, 18, { message: '密码长度在8-18字符' })
+    @Length(8, 18, { message: '密码长度在8-18字符' })
     password: string;
 }
 
