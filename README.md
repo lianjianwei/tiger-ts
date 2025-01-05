@@ -34,6 +34,9 @@
     * EnumValue
 13. 字符串生成器
     * Mongo ObjectId 生成器
+14. 线程
+15. 分布式锁
+    * redis 分布式锁
 
 ## 安装
 
