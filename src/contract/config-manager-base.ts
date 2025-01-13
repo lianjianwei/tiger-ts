@@ -1,7 +1,7 @@
 import { Type } from './type';
 
 /**
- * 配置加载器
+ * 配置管理器
  * 
  * 使用方式:
  * ```typescript
@@ -17,9 +17,19 @@ import { Type } from './type';
  * console.log(cfg);
  * ```
  */
-export abstract class ConfigLoaderBase {
+export abstract class ConfigManagerBase {
     /**
+     * 获取指定类型配置
+     * 
      * @param typer 类型
      */
-    public abstract load<T>(typer: Type<T>): Promise<T>;
+    public abstract get<T>(typer: Type<T>): T;
+
+    /**
+     * 更新指定类型的配置值
+     * 
+     * @param typer 类型
+     * @param data 配置值
+     */
+    public abstract update<T>(typer: Type<T>, data: T): void;
 }

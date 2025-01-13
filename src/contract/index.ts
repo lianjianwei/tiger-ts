@@ -1,5 +1,6 @@
 export * from './api-factory-base';
 export * from './config-loader-base';
+export * from './config-manager-base';
 export * from './db-factory-base';
 export * from './enum-factory-base';
 export * from './file-factory-base';
