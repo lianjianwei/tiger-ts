@@ -7,7 +7,6 @@ import { KoaOption } from './option';
 import { CustomError } from '../error';
 import { ApiFactoryBase } from '../../contract';
 import { enum_ } from '../../model';
-import { model } from '../..';
 
 export function koaPostOption(apiFactory: ApiFactoryBase): KoaOption {
     return (app: Koa) => {
@@ -20,7 +19,7 @@ export function koaPostOption(apiFactory: ApiFactoryBase): KoaOption {
                     api.body = plainToInstance(validateType, ctx.request.body);
                     const res = await validate(api.body);
                     if (res.length)
-                        throw new CustomError(model.enum_.ErrorCode.invalidParams, res);
+                        throw new CustomError(enum_.ErrorCode.invalidParams, res);
                 } else {
                     api.body = ctx.request.body;
                 }

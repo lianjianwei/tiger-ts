@@ -36,6 +36,12 @@ export interface IValueService {
      */
     checkCondition(conditions: Condition[][]): boolean;
     /**
+     * 检查是否足够
+     * 
+     * @param conditions 数值：一维数组格式，count 为负数表示扣除，为正不处理
+     */
+    checkEnough(values: Value[]): boolean;
+    /**
      * 根据数值类型获取数据
      * 
      * @param valueType 数值类型

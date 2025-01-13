@@ -34,6 +34,14 @@ export class ValueService implements IValueService {
         return results.some(r => r);
     }
 
+    public checkEnough(values: Value[]): boolean {
+        values ??= [];
+        return values.filter(r => r.count < 0).every(r => {
+            const count = this.getCount(r.valueType);
+            return count >= -r.count;
+        });
+    }
+
     public getCount(valueType: number) {
         valueType = Number(valueType);
         if (isNaN(valueType))
