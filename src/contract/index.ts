@@ -6,6 +6,7 @@ export * from './enum-factory-base';
 export * from './file-factory-base';
 export * from './i-api-port';
 export * from './i-value-service';
+export * from './log-factory-base';
 export * from './memory-cache-base';
 export * from './mutex-base';
 export * from './parser-factory-base';
