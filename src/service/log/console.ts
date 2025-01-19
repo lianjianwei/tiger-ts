@@ -22,7 +22,7 @@ export class ConsoleLog implements ILog {
     }
 
     public error(err: Error) {
-        this.m_Data['error'] = err;
+        this.m_Data['error'] = err.stack;
         console.error(`[${dayjs().format()}] [ERROR] - ${JSON.stringify(this.m_Data)}`);
         this.m_Data = {};
     }

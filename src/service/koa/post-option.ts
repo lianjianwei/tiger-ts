@@ -14,7 +14,8 @@ export function koaPostOption(apiFactory: ApiFactoryBase, logFactory?: LogFactor
 
         router.post('/:endpoint/:api', async (ctx) => {
             const log = logFactory?.build();
-            log?.addField('route', ctx.request.path)
+            log?.addField('protocol', 'http')
+                .addField('route', ctx.request.path)
                 .addField('request', ctx.request.body)
                 .addField('header', ctx.request.header);
             try {
