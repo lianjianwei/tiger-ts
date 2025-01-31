@@ -1,12 +1,13 @@
 import { ioc } from '../ioc';
-import { EnumFactoryBase, EnumItem, EnumReduceFunction, IEnum, MemoryCacheBase, Type } from '../../contract';
+import { EnumFactoryBase, EnumItem, EnumReduceFunction, IEnum, Type } from '../../contract';
 
 export class Enum<T extends EnumItem> implements IEnum<T> {
 
     private m_Reduce: { [name: string]: any; } = {};
 
+    private m_AllItem: { [value: number]: T; } = {};
     public get allItem() {
-        return this.m_MemoryCache.get<{ [value: number]: T; }>(this.m_Typer);
+        return this.m_AllItem;
     }
 
     private m_Items: T[];
@@ -16,7 +17,6 @@ export class Enum<T extends EnumItem> implements IEnum<T> {
     }
 
     public constructor(
-        private m_MemoryCache: MemoryCacheBase,
         private m_Typer: Type<T>,
         private m_NameReduce: { [name: string]: EnumReduceFunction<T, any>; }
     ) { }
@@ -33,7 +33,7 @@ export class Enum<T extends EnumItem> implements IEnum<T> {
     }
 
     public update(allItem: { [value: number]: T; }) {
-        this.m_MemoryCache.set(this.m_Typer, allItem);
+        this.m_AllItem = allItem;
         this.m_Items = null;
         this.m_Reduce = {};
     }
@@ -44,7 +44,6 @@ export class EnumFactory extends EnumFactoryBase {
     public m_EnumCache: { [key: string]: IEnum<any>; } = {};
 
     public constructor(
-        private m_MemoryCache: MemoryCacheBase,
         private m_EnumReduce: {
             [enumName: string]: {
                 [reduceName: string]: EnumReduceFunction<any, any>;
@@ -56,7 +55,7 @@ export class EnumFactory extends EnumFactoryBase {
 
     public build<T extends EnumItem>(typer: Type<T>): IEnum<T> {
         const enumName = ioc.getKey(typer);
-        this.m_EnumCache[enumName] ??= new Enum(this.m_MemoryCache, typer, this.m_EnumReduce[enumName] ?? {});
+        this.m_EnumCache[enumName] ??= new Enum(typer, this.m_EnumReduce[enumName] ?? {});
         return this.m_EnumCache[enumName];
     }
 }
