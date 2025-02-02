@@ -12,9 +12,9 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "skipLibCheck": true,
-        "strict": true,
         "strictPropertyInitialization": false,
         "strictNullChecks": false,
+        "noImplicitAny": false,
         "target": "ESNext"
     },
     "exclude": [

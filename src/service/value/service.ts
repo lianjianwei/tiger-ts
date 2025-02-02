@@ -34,12 +34,25 @@ export class ValueService implements IValueService {
         return results.some(r => r);
     }
 
-    public checkEnough(values: Value[]): boolean {
+    public checkEnough(values: Value[]) {
         values ??= [];
-        return values.filter(r => r.count < 0).every(r => {
+        const item = values.filter(r => r.count < 0).find(r => {
             const count = this.getCount(r.valueType);
-            return count >= -r.count;
+            return count < -r.count;
         });
+        if (item) {
+            return {
+                enough: true
+            };
+        }
+        const count = this.getCount(item.valueType);
+        return {
+            enough: false,
+            value: {
+                valueType: item.valueType,
+                count: count + item.count
+            }
+        };
     }
 
     public getCount(valueType: number) {

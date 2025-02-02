@@ -39,8 +39,9 @@ export interface IValueService {
      * 检查是否足够
      * 
      * @param conditions 数值：一维数组格式，count 为负数表示扣除，为正不处理
+     * @returns 返回对象 enough 表示是否满足，当为 true 时 value 为 null；当为 false 时，value 是具体的缺少的数值和对应的数量
      */
-    checkEnough(values: Value[]): boolean;
+    checkEnough(values: Value[]): { enough: boolean; value?: Value; };
     /**
      * 根据数值类型获取数据
      * 
