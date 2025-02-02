@@ -1,29 +1,19 @@
 import dayjs from 'dayjs';
 
-import { ILog } from '../../contract';
+import { LogBase } from '../../contract';
 
-export class ConsoleLog implements ILog {
+export class ConsoleLog extends LogBase {
 
-    private m_Data: { [key: string]: any; } = {};
-
-    public addField(key: string, value: any) {
-        this.m_Data[key] = value;
-        return this;
+    public onDebug() {
+        console.debug(`[${dayjs().format('YYYY-MM-DDTHH:mm:ssZ[Z]')}] [DEBUG] - ${JSON.stringify(this.data)}`);
     }
 
-    public debug() {
-        console.debug(`[${dayjs().format()}] [DEBUG] - ${JSON.stringify(this.m_Data)}`);
-        this.m_Data = {};
+    public onInfo() {
+        console.info(`[${dayjs().format('YYYY-MM-DDTHH:mm:ssZ[Z]')}] [INFO] - ${JSON.stringify(this.data)}`);
     }
 
-    public info() {
-        console.info(`[${dayjs().format()}] [INFO] - ${JSON.stringify(this.m_Data)}`);
-        this.m_Data = {};
-    }
-
-    public error(err: Error) {
-        this.m_Data['error'] = err.stack;
-        console.error(`[${dayjs().format()}] [ERROR] - ${JSON.stringify(this.m_Data)}`);
-        this.m_Data = {};
+    public onError(err: Error) {
+        this.data['error'] = err.stack;
+        console.error(`[${dayjs().format('YYYY-MM-DDTHH:mm:ssZ[Z]')}] [ERROR] - ${JSON.stringify(this.data)}`);
     }
 }

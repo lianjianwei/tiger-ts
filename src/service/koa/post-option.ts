@@ -17,7 +17,7 @@ export function koaPostOption(apiFactory: ApiFactoryBase, logFactory?: LogFactor
             log?.addField('protocol', 'http')
                 .addField('route', ctx.request.path)
                 .addField('header', ctx.request.header)
-                .addField('request', ctx.request.body);
+                .addField('body', ctx.request.body);
             const beginOn = Date.now();
             try {
                 const { api, validateType } = apiFactory.build(ctx.request.path);
@@ -36,7 +36,8 @@ export function koaPostOption(apiFactory: ApiFactoryBase, logFactory?: LogFactor
                     data: res
                 };
                 log?.addField('time-diff', (Date.now() - beginOn))
-                    .addField('response', ctx.body).debug();
+                    .addField('response', ctx.body)
+                    .debug();
             } catch (err: Error | any) {
                 if (err instanceof CustomError) {
                     ctx.body = {
@@ -50,7 +51,8 @@ export function koaPostOption(apiFactory: ApiFactoryBase, logFactory?: LogFactor
                     };
                 }
                 log?.addField('time-diff', (Date.now() - beginOn))
-                    .addField('response', ctx.body).error(err);
+                    .addField('response', ctx.body)
+                    .error(err);
             }
         });
 
