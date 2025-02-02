@@ -33,5 +33,5 @@ export interface IEnum<T extends EnumItem> {
 }
 
 export abstract class EnumFactoryBase {
-    public abstract build<T extends EnumItem>(typer: Type<T>): IEnum<T>;
+    public abstract build<T extends EnumItem>(typer: Type<T> | string): IEnum<T>;
 }

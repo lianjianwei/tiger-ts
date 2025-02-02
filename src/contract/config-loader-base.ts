@@ -21,5 +21,5 @@ export abstract class ConfigLoaderBase {
     /**
      * @param typer 类型
      */
-    public abstract load<T>(typer: Type<T>): Promise<T>;
+    public abstract load<T>(typer: Type<T> | string): Promise<T>;
 }

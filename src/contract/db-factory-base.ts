@@ -27,7 +27,7 @@ export interface IUnitOfWork {
 }
 
 export type BuilderOption<T extends DbModel> = {
-    model: Type<T>;
+    model: Type<T> | string;
     uow?: IUnitOfWork;
 };
 

@@ -23,7 +23,7 @@ export abstract class ConfigManagerBase {
      * 
      * @param typer 类型
      */
-    public abstract get<T>(typer: Type<T>): T;
+    public abstract get<T>(typer: Type<T> | string): T;
 
     /**
      * 更新指定类型的配置值

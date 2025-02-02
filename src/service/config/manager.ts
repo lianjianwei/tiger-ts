@@ -5,7 +5,7 @@ export class ConfigManager extends ConfigManagerBase {
 
     private m_Cache: Map<string, any> = new Map();
 
-    public get<T>(typer: Type<T>): T {
+    public get<T>(typer: Type<T> | string): T {
         const key = ioc.getKey(typer);
         const result = this.m_Cache.get(key);
         return result as T;

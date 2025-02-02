@@ -17,7 +17,7 @@ export class Enum<T extends EnumItem> implements IEnum<T> {
     }
 
     public constructor(
-        private m_Typer: Type<T>,
+        private m_Typer: Type<T> | string,
         private m_NameReduce: { [name: string]: EnumReduceFunction<T, any>; }
     ) { }
 
@@ -53,7 +53,7 @@ export class EnumFactory extends EnumFactoryBase {
         super();
     }
 
-    public build<T extends EnumItem>(typer: Type<T>): IEnum<T> {
+    public build<T extends EnumItem>(typer: Type<T> | string): IEnum<T> {
         const enumName = ioc.getKey(typer);
         this.m_EnumCache[enumName] ??= new Enum(typer, this.m_EnumReduce[enumName] ?? {});
         return this.m_EnumCache[enumName];

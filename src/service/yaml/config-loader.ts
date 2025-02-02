@@ -13,7 +13,7 @@ export class YamlConfigLoader extends ConfigLoaderBase {
         super();
     }
 
-    public async load<T>(typer: Type<T>) {
+    public async load<T>(typer: Type<T> | string) {
         this.m_Content ??= new Promise<{ [name: string]: Type<any>; }>(async (s, f) => {
             try {
                 const data = await this.m_File.read();
