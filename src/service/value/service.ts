@@ -41,17 +41,17 @@ export class ValueService implements IValueService {
             return count < -r.count;
         });
         if (item) {
+            const count = this.getCount(item.valueType);
             return {
-                enough: true
+                enough: false,
+                value: {
+                    valueType: item.valueType,
+                    count: count + item.count
+                }
             };
         }
-        const count = this.getCount(item.valueType);
         return {
-            enough: false,
-            value: {
-                valueType: item.valueType,
-                count: count + item.count
-            }
+            enough: true
         };
     }
 

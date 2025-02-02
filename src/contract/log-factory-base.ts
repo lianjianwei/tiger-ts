@@ -47,7 +47,7 @@ export abstract class LogBase implements ILog {
 export abstract class LogFactoryBase {
     public static logConfig: LogConfig = {
         level: 'debug',
-        timeFormatter: 'YYYY-MM-DDTHH:mm:ssZ[Z]'
+        timeFormatter: 'YYYY-MM-DDTHH:mm:ss.SSS'
     };
 
     public static setGlobalConfig(config: LogConfig) {
