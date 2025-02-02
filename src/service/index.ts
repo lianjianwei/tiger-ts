@@ -1,4 +1,5 @@
 export * from './api';
+export * from './bullmq';
 export * from './config';
 export * from './enum';
 export * from './error';

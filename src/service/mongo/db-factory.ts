@@ -30,7 +30,7 @@ export class MongoDbFactory extends DbFactoryBase {
     }
 
     public build<T extends DbModel>(opt: BuilderOption<T>): IDbRepository<T> {
-        return new MongoDbRepository(this, opt);
+        return new MongoDbRepository<T>(this, opt);
     }
 
     public uow(): IUnitOfWork {
