@@ -11,7 +11,7 @@ export class ConfigManager extends ConfigManagerBase {
         return result as T;
     }
 
-    public update<T>(typer: Type<T>, data: T) {
+    public update<T>(typer: Type<T> | string, data: T) {
         const key = ioc.getKey(typer);
         this.m_Cache.set(key, data);
     }

@@ -31,5 +31,5 @@ export abstract class ConfigManagerBase {
      * @param typer 类型
      * @param data 配置值
      */
-    public abstract update<T>(typer: Type<T>, data: T): void;
+    public abstract update<T>(typer: Type<T> | string, data: T): void;
 }
