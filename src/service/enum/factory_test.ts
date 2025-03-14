@@ -3,8 +3,7 @@ import 'reflect-metadata';
 import { deepStrictEqual } from 'assert';
 
 import { Enum as Self } from './factory';
-import { Mock } from '../mock';
-import { EnumItem, MemoryCacheBase } from '../../contract';
+import { EnumItem, Type } from '../../contract';
 
 class TestData extends EnumItem {
     public static ctor = 'TestData';
@@ -19,16 +18,8 @@ class TextTest {
 describe('src/service/enum/factory.ts', () => {
     describe('.getReduce<TReduce>(reduceTyper: Type<TReduce>)', () => {
         it('ok', async () => {
-            const mockMemoryCache = new Mock<MemoryCacheBase>();
-            const self = new Self(mockMemoryCache.actual, TestData, {
-                [TextTest.ctor]: (memo: TextTest, r) => {
-                    memo[r.text] = r;
-                    return memo;
-                }
-            });
-            mockMemoryCache.exceptReturn(
-                r => r.get(TestData),
-                {
+            const self = new Self(TestData, async (_typer: Type<TestData> | string) => {
+                return {
                     1: {
                         value: 1,
                         text: 'value1'
@@ -37,9 +28,15 @@ describe('src/service/enum/factory.ts', () => {
                         value: 2,
                         text: 'value2'
                     }
+                };
+            }, {
+                [TextTest.ctor]: (memo: TextTest, r) => {
+                    if (r.text)
+                        memo[r.text] = r;
+                    return memo;
                 }
-            );
-            const res = self.getReduce(TextTest);
+            });
+            const res = await self.getReduce(TextTest);
             deepStrictEqual(res, {
                 'value1': {
                     value: 1,

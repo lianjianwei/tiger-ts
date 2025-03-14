@@ -1,35 +1,36 @@
 import { Type } from './type';
 
-export type EnumReduceFunction<T, R> = (memo: R, r: T) => R;
-
 export class EnumItem {
     public value: number;
     public text?: string;
 }
 
+export type EnumReduceFunction<T extends EnumItem, R> = (memo: R, r: T) => R;
+
+export type EnumLoadFunction<T extends EnumItem> = (typer: Type<T> | string) => Promise<{ [value: number]: T; }>;
+
 export interface IEnum<T extends EnumItem> {
     /**
      * 所有数据对象
      */
-    readonly allItem: { [value: number]: T; };
+    readonly allItem: Promise<{ [value: number]: T; }>;
 
     /**
      * 所有数据数组
      */
-    readonly items: T[];
+    readonly items: Promise<T[]>;
 
     /**
      * 获取聚合数据
      * 
      * @param reduceTyper
      */
-    getReduce<TReduce>(reduceTyper: Type<TReduce>): TReduce;
+    getReduce<TReduce>(reduceTyper: Type<TReduce>): Promise<TReduce>;
 
     /**
-     * 更新数据
-     * @param allItem 数据
+     * 刷新数据
      */
-    update(allItem: { [value: number]: T; }): void;
+    flush(): void;
 }
 
 export abstract class EnumFactoryBase {

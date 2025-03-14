@@ -8,7 +8,6 @@ export * from './ioc';
 export * from './koa';
 export * from './log';
 export * from './math';
-export * from './memory';
 export * from './mock';
 export * from './mongo';
 export * from './parser';

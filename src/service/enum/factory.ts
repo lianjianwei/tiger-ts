@@ -1,23 +1,32 @@
 import { ioc } from '../ioc';
-import { EnumFactoryBase, EnumItem, EnumReduceFunction, IEnum, Type } from '../../contract';
+import { EnumFactoryBase, EnumItem, EnumLoadFunction, EnumReduceFunction, IEnum, Type } from '../../contract';
 
 export class Enum<T extends EnumItem> implements IEnum<T> {
 
-    private m_Reduce: { [name: string]: any; } = {};
+    private m_Reduce: { [name: string]: Promise<any>; } = {};
 
-    private m_AllItem: { [value: number]: T; } = {};
+    private m_AllItem: Promise<{ [value: number]: T; }>;
     public get allItem() {
+        this.m_AllItem ??= this.m_EnumLoadFunction(this.m_Typer);
         return this.m_AllItem;
     }
 
-    private m_Items: T[];
+    private m_Items: Promise<T[]>;
     public get items() {
-        this.m_Items ??= Object.values(this.allItem);
+        this.m_Items ??= new Promise<T[]>(async (s, f) => {
+            try {
+                const allItem = await this.allItem;
+                s(Object.values(allItem));
+            } catch (error) {
+                f(error);
+            }
+        });
         return this.m_Items;
     }
 
     public constructor(
         private m_Typer: Type<T> | string,
+        private m_EnumLoadFunction: EnumLoadFunction<T>,
         private m_NameReduce: { [name: string]: EnumReduceFunction<T, any>; }
     ) { }
 
@@ -28,12 +37,20 @@ export class Enum<T extends EnumItem> implements IEnum<T> {
             throw new Error(`${name}.${reduceName}未配置`);
         }
 
-        this.m_Reduce[reduceName] ??= this.items.reduce(this.m_NameReduce[reduceName], {});
-        return this.m_Reduce[reduceName] as TReduce;
+        this.m_Reduce[reduceName] ??= new Promise<TReduce>(async (s, f) => {
+            try {
+                const items = await this.items;
+                const reduce = items.reduce(this.m_NameReduce[reduceName], {} as TReduce);
+                s(reduce);
+            } catch (error) {
+                f(error);
+            }
+        });
+        return this.m_Reduce[reduceName] as Promise<TReduce>;
     }
 
-    public update(allItem: { [value: number]: T; }) {
-        this.m_AllItem = allItem;
+    public flush() {
+        this.m_AllItem = null;
         this.m_Items = null;
         this.m_Reduce = {};
     }
@@ -44,6 +61,9 @@ export class EnumFactory extends EnumFactoryBase {
     public m_EnumCache: { [key: string]: IEnum<any>; } = {};
 
     public constructor(
+        private m_EnumLoadFunctionMap: {
+            [key: string]: EnumLoadFunction<any>;
+        },
         private m_EnumReduce: {
             [enumName: string]: {
                 [reduceName: string]: EnumReduceFunction<any, any>;
@@ -55,7 +75,7 @@ export class EnumFactory extends EnumFactoryBase {
 
     public build<T extends EnumItem>(typer: Type<T> | string): IEnum<T> {
         const enumName = ioc.getKey(typer);
-        this.m_EnumCache[enumName] ??= new Enum(typer, this.m_EnumReduce[enumName] ?? {});
+        this.m_EnumCache[enumName] ??= new Enum(typer, this.m_EnumLoadFunctionMap[enumName] ?? this.m_EnumLoadFunctionMap[''], this.m_EnumReduce[enumName] ?? {});
         return this.m_EnumCache[enumName];
     }
 }
