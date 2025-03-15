@@ -4,16 +4,16 @@ export class ValueService implements IValueService {
 
     public constructor(
         public ownValue: OwnValue,
-        private m_ValueHandler: ValueHandlerBase
+        private m_ValueHandler?: ValueHandlerBase
     ) { }
 
-    public checkCondition(conditions: Condition[][]) {
+    public async checkCondition(conditions: Condition[][]) {
         if (!conditions || !conditions.length)
             return true;
 
-        const results = conditions.map(r => {
-            const res = r.map(cr => {
-                const count = this.getCount(cr.valueType);
+        const allPromises = conditions.map(async r => {
+            const promises = r.map(async cr => {
+                const count = await this.getCount(cr.valueType);
                 switch (cr.op) {
                     case '>':
                         return count > cr.count;
@@ -29,24 +29,34 @@ export class ValueService implements IValueService {
                         return count == cr.count;
                 }
             });
+            const res = await Promise.all(promises);
             return res.every(cr => cr);
         });
+        const results = await Promise.all(allPromises);
         return results.some(r => r);
     }
 
-    public checkEnough(values: Value[]) {
+    public async checkEnough(values: Value[]) {
         values ??= [];
-        const item = values.filter(r => r.count < 0).find(r => {
-            const count = this.getCount(r.valueType);
-            return count < -r.count;
-        });
+        let item: Value;
+        let oldCount: number;
+        for (const r of values) {
+            if (r.count >= 0)
+                continue;
+
+            const count = await this.getCount(r.valueType);
+            if (count < -r.count) {
+                item = r;
+                oldCount = count;
+                break;
+            }
+        }
         if (item) {
-            const count = this.getCount(item.valueType);
             return {
                 enough: false,
                 value: {
                     valueType: item.valueType,
-                    count: count + item.count
+                    count: oldCount + item.count
                 }
             };
         }
@@ -55,7 +65,7 @@ export class ValueService implements IValueService {
         };
     }
 
-    public getCount(valueType: number) {
+    public async getCount(valueType: number) {
         valueType = Number(valueType);
         if (isNaN(valueType))
             throw new Error(`无效的 valueType: [${valueType}]`);
@@ -65,7 +75,7 @@ export class ValueService implements IValueService {
             count: this.ownValue[valueType] ?? 0
         };
 
-        this.m_ValueHandler?.getCountHandle({
+        await this.m_ValueHandler?.getCountHandle({
             value: value,
             valueService: this
         });
@@ -73,7 +83,7 @@ export class ValueService implements IValueService {
         return value.count;
     }
 
-    public update(values: Value[]) {
+    public async update(values: Value[]) {
         for (const r of values ?? []) {
             r.count = Number(r.count);
             r.valueType = Number(r.valueType);
@@ -82,7 +92,7 @@ export class ValueService implements IValueService {
             if (isNaN(r.valueType))
                 throw new Error(`无效的 value: ${JSON.stringify(r)}`);
 
-            this.m_ValueHandler?.updateHandle({
+            await this.m_ValueHandler?.updateHandle({
                 value: r,
                 valueService: this
             });

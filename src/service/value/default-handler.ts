@@ -8,7 +8,7 @@ import { ValueHandlerBase, ValueHandlerContext } from '../../contract';
  * const ownValue = {};
  * const valueHandler = new DefaultValueHandler();
  * const valueService = new ValueService(ownValue, valueHandler);
- * valueService.update([ { count: 2, valueType: 1 } ]);
+ * await valueService.update([ { count: 2, valueType: 1 } ]);
  * console.log(ownValue); // { 1: 2 }
  * ```
  */

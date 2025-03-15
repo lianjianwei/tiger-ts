@@ -34,26 +34,26 @@ export interface IValueService {
      * 
      * @param conditions 条件：二维数组格式，不同数组之间为或者关系，同一个数组底下的为并且条件
      */
-    checkCondition(conditions: Condition[][]): boolean;
+    checkCondition(conditions: Condition[][]): Promise<boolean>;
     /**
      * 检查是否足够
      * 
      * @param conditions 数值：一维数组格式，count 为负数表示扣除，为正不处理
      * @returns 返回对象 enough 表示是否满足，当为 true 时 value 为 null；当为 false 时，value 是具体的缺少的数值和对应的数量
      */
-    checkEnough(values: Value[]): { enough: boolean; value?: Value; };
+    checkEnough(values: Value[]): Promise<{ enough: boolean; value?: Value; }>;
     /**
      * 根据数值类型获取数据
      * 
      * @param valueType 数值类型
      */
-    getCount(valueType: number): number;
+    getCount(valueType: number): Promise<number>;
     /**
      * 更新数据
      * 
      * @param values 数值
      */
-    update(values: Value[]): void;
+    update(values: Value[]): Promise<void>;
 }
 
 /**
@@ -87,12 +87,12 @@ export abstract class ValueHandlerBase {
      * 
      * @param _ctx 上下文
      */
-    public getCountHandle(_ctx: ValueHandlerContext) { };
+    public async getCountHandle(_ctx: ValueHandlerContext) { };
 
     /**
      * 更新处理器
      * 
      * @param _ctx 上下文
      */
-    public updateHandle(_ctx: ValueHandlerContext) { };
+    public async updateHandle(_ctx: ValueHandlerContext) { };
 }

@@ -18,9 +18,7 @@
         "target": "ESNext"
     },
     "exclude": [
-        "node_modules",
-        "./src/**/*_it.ts",
-        "./src/**/*_test.ts"
+        "node_modules"
     ],
     "include": [
         "./src/**/*.ts"

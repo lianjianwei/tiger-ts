@@ -6,7 +6,7 @@ import { IValueService } from '../../contract';
 
 describe('src/service/value/default-handler.ts', () => {
     describe('.updateHandle(ctx: ValueHandlerContext)', () => {
-        it('ok', () => {
+        it('ok', async () => {
             const self = new Self();
 
             const ownValue = {
@@ -16,7 +16,7 @@ describe('src/service/value/default-handler.ts', () => {
                 ownValue: ownValue
             });
 
-            self.updateHandle({
+            await self.updateHandle({
                 value: {
                     valueType: 1,
                     count: 8

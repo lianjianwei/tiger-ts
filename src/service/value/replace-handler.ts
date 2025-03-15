@@ -9,7 +9,7 @@ import { enum_ } from '../../model';
  * const ownValue = {};
  * const valueHandler = new ReplaceValueHandler();
  * const valueService = new ValueService(ownValue, valueHandler);
- * valueService.update([ { count: 2, valueType: 1 } ]);
+ * await valueService.update([ { count: 2, valueType: 1 } ]);
  * console.log(ownValue); // { 1: 0 }
  * ```
  */
@@ -21,11 +21,11 @@ export class ReplaceValueHandler extends ValueHandlerBase {
         super();
     }
 
-    public updateHandle(ctx: ValueHandlerContext) {
-        const allItem = this.m_EnumFactory.build(enum_.ValueTypeData).allItem;
+    public async updateHandle(ctx: ValueHandlerContext) {
+        const allItem = await this.m_EnumFactory.build(enum_.ValueTypeData).allItem;
         if (allItem[ctx.value.valueType]?.isReplace)
             ctx.valueService.ownValue[ctx.value.valueType] = 0;
 
-        this.next?.updateHandle(ctx);
+        await this.next?.updateHandle(ctx);
     }
 }

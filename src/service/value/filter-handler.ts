@@ -13,7 +13,7 @@ import { enum_ } from '../../model';
  * const valueHandler = new FilterValueHandler();
  * valueHandler.setNext(new DefaultValueHandler());
  * const valueService = new ValueService(ownValue, valueHandler);
- * valueService.update([ { count: 0, valueType: 1 } ]); // 不会走到 DefaultValueHandler 的代码中
+ * await valueService.update([ { count: 0, valueType: 1 } ]); // 不会走到 DefaultValueHandler 的代码中
  * ```
  */
 export class FilterValueHandler extends ValueHandlerBase {
@@ -24,8 +24,8 @@ export class FilterValueHandler extends ValueHandlerBase {
         super();
     }
 
-    public updateHandle(ctx: ValueHandlerContext) {
-        const allItem = this.m_EnumFactory.build(enum_.ValueTypeData).allItem;
+    public async updateHandle(ctx: ValueHandlerContext) {
+        const allItem = await this.m_EnumFactory.build(enum_.ValueTypeData).allItem;
         if (allItem[ctx.value.valueType]?.isReplace) {
             const oldCount = ctx.valueService.ownValue[ctx.value.valueType] ?? 0;
             if (oldCount == ctx.value.count)
@@ -34,6 +34,6 @@ export class FilterValueHandler extends ValueHandlerBase {
             return;
         }
 
-        this.next?.updateHandle(ctx);
+        await this.next?.updateHandle(ctx);
     }
 }

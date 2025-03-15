@@ -7,7 +7,7 @@ import { enum_ } from '../../model';
 
 describe('src/service/value/replace-handler.ts', () => {
     describe('.updateHandle(ctx: ValueHandlerContext)', () => {
-        it('ok', () => {
+        it('ok', async () => {
             const mockEnumFactory = new Mock<EnumFactoryBase>();
             const self = new Self(mockEnumFactory.actual);
 
@@ -31,7 +31,7 @@ describe('src/service/value/replace-handler.ts', () => {
                 mockEnum.actual
             );
 
-            self.updateHandle({
+            await self.updateHandle({
                 value: {
                     valueType: 1,
                     count: 2

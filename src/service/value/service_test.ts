@@ -6,17 +6,17 @@ import { ValueHandlerBase } from '../../contract';
 
 describe('src/service/value/service.ts', () => {
     describe('.getCount(uow: IUnitOfWork, valueType: number)', () => {
-        it('ok', () => {
+        it('ok', async () => {
             const self = new Self({
                 1: 100
             }, null);
-            const count = self.getCount(1);
+            const count = await self.getCount(1);
             strictEqual(count, 100);
         });
     });
 
     describe('.update(uow: IUnitOfWork, values: Value[])', () => {
-        it('ok', () => {
+        it('ok', async () => {
             const mockValueHandler = new Mock<ValueHandlerBase>();
             const self = new Self({}, mockValueHandler.actual);
             mockValueHandler.except.updateHandle({
@@ -26,7 +26,7 @@ describe('src/service/value/service.ts', () => {
                 },
                 valueService: self
             });
-            self.update([
+            await self.update([
                 {
                     count: 100,
                     valueType: 1
@@ -36,24 +36,24 @@ describe('src/service/value/service.ts', () => {
     });
 
     describe('.checkCondition(uow: IUnitOfWork, conditions: Condition[][])', () => {
-        it('default return true', () => {
+        it('default return true', async () => {
             const self = new Self({}, null);
-            const res1 = self.checkCondition(null);
+            const res1 = await self.checkCondition(null);
             strictEqual(res1, true);
 
-            const res2 = self.checkCondition([]);
+            const res2 = await self.checkCondition([]);
             strictEqual(res2, true);
 
-            const res3 = self.checkCondition([[]]);
+            const res3 = await self.checkCondition([[]]);
             strictEqual(res3, true);
         });
 
-        it('= is ok', () => {
+        it('= is ok', async () => {
             const self = new Self({
                 1: 100,
                 2: 200
             }, null);
-            const res1 = self.checkCondition([
+            const res1 = await self.checkCondition([
                 [
                     {
                         count: 100,
@@ -64,7 +64,7 @@ describe('src/service/value/service.ts', () => {
             ]);
             strictEqual(res1, true);
 
-            const res2 = self.checkCondition([
+            const res2 = await self.checkCondition([
                 [
                     {
                         count: 0,
@@ -83,7 +83,7 @@ describe('src/service/value/service.ts', () => {
             strictEqual(res2, true);
 
 
-            const res3 = self.checkCondition([
+            const res3 = await self.checkCondition([
                 [
                     {
                         count: 0,
@@ -100,12 +100,12 @@ describe('src/service/value/service.ts', () => {
             strictEqual(res3, false);
         });
 
-        it('> is ok', () => {
+        it('> is ok', async () => {
             const self = new Self({
                 1: 100,
                 2: 200
             }, null);
-            const res1 = self.checkCondition([
+            const res1 = await self.checkCondition([
                 [
                     {
                         count: 50,
@@ -116,7 +116,7 @@ describe('src/service/value/service.ts', () => {
             ]);
             strictEqual(res1, true);
 
-            const res2 = self.checkCondition([
+            const res2 = await self.checkCondition([
                 [
                     {
                         count: 100,
@@ -134,7 +134,7 @@ describe('src/service/value/service.ts', () => {
             ]);
             strictEqual(res2, true);
 
-            const res3 = self.checkCondition([
+            const res3 = await self.checkCondition([
                 [
                     {
                         count: 100,
@@ -152,12 +152,12 @@ describe('src/service/value/service.ts', () => {
         });
 
 
-        it('>= is ok', () => {
+        it('>= is ok', async () => {
             const self = new Self({
                 1: 100,
                 2: 200
             }, null);
-            const res1 = self.checkCondition([
+            const res1 = await self.checkCondition([
                 [
                     {
                         count: 50,
@@ -168,7 +168,7 @@ describe('src/service/value/service.ts', () => {
             ]);
             strictEqual(res1, true);
 
-            const res2 = self.checkCondition([
+            const res2 = await self.checkCondition([
                 [
                     {
                         count: 101,
@@ -186,7 +186,7 @@ describe('src/service/value/service.ts', () => {
             ]);
             strictEqual(res2, true);
 
-            const res3 = self.checkCondition([
+            const res3 = await self.checkCondition([
                 [
                     {
                         count: 100,
@@ -203,12 +203,12 @@ describe('src/service/value/service.ts', () => {
             strictEqual(res3, true);
         });
 
-        it('< is ok', () => {
+        it('< is ok', async () => {
             const self = new Self({
                 1: 100,
                 2: 200
             }, null);
-            const res1 = self.checkCondition([
+            const res1 = await self.checkCondition([
                 [
                     {
                         count: 150,
@@ -219,7 +219,7 @@ describe('src/service/value/service.ts', () => {
             ]);
             strictEqual(res1, true);
 
-            const res2 = self.checkCondition([
+            const res2 = await self.checkCondition([
                 [
                     {
                         count: 100,
@@ -237,7 +237,7 @@ describe('src/service/value/service.ts', () => {
             ]);
             strictEqual(res2, true);
 
-            const res3 = self.checkCondition([
+            const res3 = await self.checkCondition([
                 [
                     {
                         count: 100,
@@ -254,12 +254,12 @@ describe('src/service/value/service.ts', () => {
             strictEqual(res3, false);
         });
 
-        it('<= is ok', () => {
+        it('<= is ok', async () => {
             const self = new Self({
                 1: 100,
                 2: 200
             }, null);
-            const res1 = self.checkCondition([
+            const res1 = await self.checkCondition([
                 [
                     {
                         count: 150,
@@ -270,7 +270,7 @@ describe('src/service/value/service.ts', () => {
             ]);
             strictEqual(res1, true);
 
-            const res2 = self.checkCondition([
+            const res2 = await self.checkCondition([
                 [
                     {
                         count: 100,
@@ -288,7 +288,7 @@ describe('src/service/value/service.ts', () => {
             ]);
             strictEqual(res2, true);
 
-            const res3 = self.checkCondition([
+            const res3 = await self.checkCondition([
                 [
                     {
                         count: 100,
