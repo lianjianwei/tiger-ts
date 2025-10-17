@@ -24,7 +24,6 @@
     "devDependencies": {
         "@types/koa": "^2.15.0",
         "@types/koa__cors": "^5.0.0",
-        "@types/koa-bodyparser": "^4.3.12",
         "@types/koa-router": "^7.4.8",
         "@types/mocha": "^10.0.6",
         "@types/node": "^18.16.1",
@@ -42,7 +41,7 @@
         "dayjs": "^1.11.18",
         "ioredis": "^5.8.1",
         "koa": "^2.16.2",
-        "koa-bodyparser": "^4.4.1",
+        "koa-body": "^6.0.1",
         "koa-router": "^12.0.1",
         "log4js": "^6.9.1",
         "mongodb": "^6.20.0",

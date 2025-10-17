@@ -1,6 +1,6 @@
 import { strictEqual } from 'assert';
 
-import { Api, metedata } from './decorator';
+import { Api, API_METEDATA } from './decorator';
 import { IApi } from '../../contract';
 
 @Api({ route: '/mh/login' })
@@ -13,7 +13,7 @@ class TestApi implements IApi {
 describe('src/service/api/decortor.ts', () => {
     describe('@Api()', () => {
         it('ok', async () => {
-            strictEqual(metedata['/mh/login'].api, TestApi);
+            strictEqual(API_METEDATA['/mh/login'].api, TestApi);
         });
     });
 });
