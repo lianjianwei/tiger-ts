@@ -22,7 +22,7 @@ export class RedisMutex extends MutexBase {
     public async waitLock(option: MutexOption) {
         option.timeoutSeconds ??= 10;
         option.tryCount ??= 50;
-        option.sleepRange ??= [100, 200];
+        option.sleepRange ??= [50, 100];
 
         let count = 0;
         while (count < option.tryCount) {
