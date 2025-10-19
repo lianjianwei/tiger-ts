@@ -18,7 +18,7 @@ describe('src/service/mongo/unit-of-work.ts', () => {
         });
     });
 
-    describe('.registerRemove(model: string, entry: DbModel)', () => {
+    describe('.registerRemove(model: string, where: any)', () => {
         it('ok', async () => {
             const mockDbFactory = new Mock<DbFactoryBase>();
             const self = new Self(mockDbFactory.actual, {});

@@ -39,8 +39,16 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
         await this.uow.commit();
     }
 
-    public async remove(entry: T) {
-        this.uow.registerRemove(this.m_Model, entry);
+    public async remove(where: any) {
+        this.uow.registerRemove(this.m_Model, where);
+        if (this.isTx)
+            return;
+
+        await this.uow.commit();
+    }
+
+    public async removeById(id: string) {
+        this.uow.registerRemove(this.m_Model, { id });
         if (this.isTx)
             return;
 

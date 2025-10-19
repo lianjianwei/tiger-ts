@@ -26,14 +26,16 @@ export class MongoUnitOfWork implements IUnitOfWork {
         });
     }
 
-    public registerRemove(model: string, entry: DbModel) {
+    public registerRemove(model: string, where: any) {
         this.m_Bulk[model] ??= [];
-        const doc = this.toDoc(entry);
+        const filter = Object.assign({}, where || {});
+        if (filter.id && !filter._id) {
+            filter._id = filter.id;
+            delete filter.id;
+        }
         this.m_Bulk[model].push({
-            deleteOne: {
-                filter: {
-                    _id: doc._id
-                }
+            deleteMany: {
+                filter: filter
             }
         });
     }

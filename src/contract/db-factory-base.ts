@@ -51,11 +51,18 @@ export interface IDbRepository<T extends DbModel> {
     add(entry: T): Promise<void>;
 
     /**
-     * 数据库删除
+     * 根据条件删除数据
      * 
-     * @param entry 实例
+     * @param where 删除条件
      */
-    remove(entry: T): Promise<void>;
+    remove(where: any): Promise<void>;
+
+    /**
+     * 根据ID删除数据
+     * 
+     * @param id 实体ID
+     */
+    removeById(id: string): Promise<void>;
 
     /**
      * 数据库保存
