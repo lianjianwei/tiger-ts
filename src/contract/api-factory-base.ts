@@ -1,10 +1,9 @@
+import Router from 'koa-router';
+
 import { Type } from './type';
 
-export interface IApi<TBody = any, THeader = any> {
-    body?: TBody;
-    header?: THeader;
-
-    call(): Promise<any>;
+export interface IApi {
+    call(ctx: Router.RouterContext): Promise<any>;
 }
 
 export abstract class ApiFactoryBase {

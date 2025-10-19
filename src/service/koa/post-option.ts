@@ -26,15 +26,12 @@ export function koaPostOption(apiFactory: ApiFactoryBase, logFactory: LogFactory
                 try {
                     const { api, validateType } = apiFactory.build(ctx.request.path);
                     if (validateType) {
-                        api.body = plainToInstance(validateType, ctx.request.body);
-                        const res = await validate(api.body);
+                        const body = plainToInstance(validateType, ctx.request.body);
+                        const res = await validate(body);
                         if (res.length)
                             throw new CustomError(enum_.ErrorCode.invalidParams, res);
-                    } else {
-                        api.body = ctx.request.body;
                     }
-                    api.header = ctx.request.header;
-                    const res = await api.call();
+                    const res = await api.call(ctx);
                     ctx.body = {
                         err: enum_.ErrorCode.success,
                         data: res
