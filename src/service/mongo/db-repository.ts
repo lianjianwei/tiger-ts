@@ -39,6 +39,19 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
         await this.uow.commit();
     }
 
+    public async bulkAdd(entries: T[]) {
+        if (!entries?.length)
+            return;
+
+        for (const entry of entries)
+            this.uow.registerAdd(this.m_Model, entry);
+
+        if (this.isTx)
+            return;
+
+        await this.uow.commit();
+    }
+
     public async remove(where: any) {
         this.uow.registerRemove(this.m_Model, where);
         if (this.isTx)

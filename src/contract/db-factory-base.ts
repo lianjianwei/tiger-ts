@@ -51,6 +51,13 @@ export interface IDbRepository<T extends DbModel> {
     add(entry: T): Promise<void>;
 
     /**
+     * 批量添加
+     * 
+     * @param entries 实例集合
+     */
+    bulkAdd(entries: T[]): Promise<void>;
+
+    /**
      * 根据条件删除数据
      * 
      * @param where 删除条件
