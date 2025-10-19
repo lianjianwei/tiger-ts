@@ -1,19 +1,20 @@
 import { deepStrictEqual, strictEqual } from 'assert';
 import { Collection, Db, Document, FindCursor, MongoClient, WithId } from 'mongodb';
 
-import { MongoDbQuery as Self } from './db-query';
+import { MongoDbRepository } from './db-repository';
 import { Mock } from '../mock';
-import { DbFactoryBase, DbModel } from '../../contract';
+import { BuilderOption, DbFactoryBase, DbModel } from '../../contract';
 
 class Enum extends DbModel {
     public items: any[];
 }
 
-describe('src/service/mongo/db-query.ts', () => {
+describe('src/service/mongo/db-repository.ts', () => {
     describe('.count(where?: any)', () => {
         it('ok', async () => {
             const mockDbFactory = new Mock<DbFactoryBase>();
-            const self = new Self<Enum>(mockDbFactory.actual, 'Enum');
+            const builderOption: BuilderOption<Enum> = { model: 'Enum' };
+            const self = new MongoDbRepository<Enum>(mockDbFactory.actual, builderOption);
 
             const mockMongoClient = new Mock<MongoClient>();
             mockDbFactory.exceptReturn(
@@ -46,7 +47,8 @@ describe('src/service/mongo/db-query.ts', () => {
     describe('.findOne(opt?: QueryOption)', () => {
         it('ok', async () => {
             const mockDbFactory = new Mock<DbFactoryBase>();
-            const self = new Self<Enum>(mockDbFactory.actual, 'Enum');
+            const builderOption: BuilderOption<Enum> = { model: 'Enum' };
+            const self = new MongoDbRepository<Enum>(mockDbFactory.actual, builderOption);
 
             const mockMongoClient = new Mock<MongoClient>();
             mockDbFactory.exceptReturn(
@@ -98,11 +100,74 @@ describe('src/service/mongo/db-query.ts', () => {
         });
     });
 
+    describe('.findAll(opt?: QueryOption)', () => {
+        it('ok', async () => {
+            const mockDbFactory = new Mock<DbFactoryBase>();
+            const builderOption: BuilderOption<Enum> = { model: 'Enum' };
+            const self = new MongoDbRepository<Enum>(mockDbFactory.actual, builderOption);
+
+            const mockMongoClient = new Mock<MongoClient>();
+            mockDbFactory.exceptReturn(
+                r => r.getOriginConnection<MongoClient>(),
+                mockMongoClient.actual
+            );
+
+            const mockDb = new Mock<Db>();
+            mockMongoClient.exceptReturn(
+                r => r.db(),
+                mockDb.actual
+            );
+
+            const mockCollection = new Mock<Collection>();
+            mockDb.exceptReturn(
+                r => r.collection('Enum'),
+                mockCollection.actual
+            );
+
+            const mockCursor = new Mock<FindCursor<WithId<Document>>>();
+            mockCollection.exceptReturn(
+                r => r.find({
+                    _id: 'LoginData' as any,
+                }, {}),
+                mockCursor.actual
+            );
+
+            mockCursor.exceptReturn(
+                r => r.toArray(),
+                [{
+                    _id: 'LoginData',
+                    items: [
+                        {
+                            value: 1,
+                            text: '1'
+                        }
+                    ]
+                }]
+            );
+
+            const res = await self.findAll({
+                where: {
+                    id: 'LoginData'
+                }
+            });
+            deepStrictEqual(res, [{
+                id: 'LoginData',
+                items: [
+                    {
+                        value: 1,
+                        text: '1'
+                    }
+                ]
+            }]);
+        });
+    });
+
 
     describe('.find(opt?: QueryOption)', () => {
         it('ok', async () => {
             const mockDbFactory = new Mock<DbFactoryBase>();
-            const self = new Self<Enum>(mockDbFactory.actual, 'Enum');
+            const builderOption: BuilderOption<Enum> = { model: 'Enum' };
+            const self = new MongoDbRepository<Enum>(mockDbFactory.actual, builderOption);
 
             const mockMongoClient = new Mock<MongoClient>();
             mockDbFactory.exceptReturn(

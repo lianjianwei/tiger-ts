@@ -39,27 +39,6 @@ export type QueryOption = Partial<{
     orderByDesc: string[];
 }>;
 
-export interface IDbQuery<T> {
-    /**
-     * 根据条件查询数量
-     * 
-     * @param where 条件
-     */
-    count(where?: any): Promise<number>;
-    /**
-     * 根据条件查询一条数据（take固定为1）
-     * 
-     * @param opt 查询条件
-     */
-    findOne(opt?: QueryOption): Promise<T>;
-    /**
-     * 根据条件查询数据
-     * 
-     * @param opt 查询条件
-     */
-    findAll(opt?: QueryOption): Promise<T[]>;
-}
-
 /**
  * 数据仓储对象
  */
@@ -86,9 +65,25 @@ export interface IDbRepository<T extends DbModel> {
     save(entry: T): Promise<void>;
 
     /**
-     * 数据查询对象
+     * 根据条件查询数量
+     * 
+     * @param where 条件
      */
-    query(): IDbQuery<T>;
+    count(where?: any): Promise<number>;
+
+    /**
+     * 根据条件查询一条数据（take固定为1）
+     * 
+     * @param opt 查询条件
+     */
+    findOne(opt?: QueryOption): Promise<T>;
+
+    /**
+     * 根据条件查询数据
+     * 
+     * @param opt 查询条件
+     */
+    findAll(opt?: QueryOption): Promise<T[]>;
 }
 
 /**
