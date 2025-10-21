@@ -8,7 +8,7 @@ export class RewardParser implements IParser<Reward[][]> {
         private m_Regex = /^([^*=<>!#-]+)\*(-?[0-9.]+)\*(\d+)$/
     ) { }
 
-    public parse(data: any) {
+    public parse(data: any, srvNo: number) {
         if (data == null)
             return null;
 
@@ -18,7 +18,10 @@ export class RewardParser implements IParser<Reward[][]> {
         const lines = data.split("\n");
         const result: Reward[][] = [];
         let rewards: Reward[] = [];
-        const textOfValueType = this.m_EnumFactory.build(enum_.ValueTypeData).getReduce(enum_.TextOfValueType);
+        const textOfValueType = this.m_EnumFactory.build({
+            typer: enum_.ValueTypeData,
+            srvNo
+        }).getReduce(enum_.TextOfValueType);
         for (const line of lines) {
             if (!line) {
                 if (rewards.length)

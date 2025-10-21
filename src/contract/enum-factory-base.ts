@@ -9,6 +9,11 @@ export type EnumReduceFunction<T extends EnumItem, R> = (memo: R, r: T) => R;
 
 export type EnumLoadFunction<T extends EnumItem> = (typer: Type<T> | string) => Promise<{ [value: number]: T; }>;
 
+export type EnumBuildOption<T extends EnumItem> = {
+    typer: Type<T> | string;
+    srvNo?: number;
+};
+
 export interface IEnum<T extends EnumItem> {
     /**
      * 所有数据对象
@@ -34,5 +39,5 @@ export interface IEnum<T extends EnumItem> {
 }
 
 export abstract class EnumFactoryBase {
-    public abstract build<T extends EnumItem>(typer: Type<T> | string): IEnum<T>;
+    public abstract build<T extends EnumItem>(option: EnumBuildOption<T>): IEnum<T>;
 }

@@ -1,5 +1,5 @@
 export interface IParser<T = any> {
-    parse(data: any): T | null | undefined;
+    parse(data: any, srvNo?: number): T | null | undefined;
 }
 
 export abstract class ParserFactoryBase {

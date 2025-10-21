@@ -1,5 +1,5 @@
 import { ioc } from '../ioc';
-import { EnumFactoryBase, EnumItem, EnumLoadFunction, EnumReduceFunction, IEnum, Type } from '../../contract';
+import { EnumBuildOption, EnumFactoryBase, EnumItem, EnumLoadFunction, EnumReduceFunction, IEnum, Type } from '../../contract';
 
 export class Enum<T extends EnumItem> implements IEnum<T> {
 
@@ -58,7 +58,11 @@ export class Enum<T extends EnumItem> implements IEnum<T> {
 
 export class EnumFactory extends EnumFactoryBase {
 
-    public m_EnumCache: { [key: string]: IEnum<any>; } = {};
+    public m_EnumCache: { 
+        [srvNo: number]: {
+            [key: string]: IEnum<any>;
+        } 
+    } = {};
 
     public constructor(
         private m_EnumLoadFunctionMap: {
@@ -73,9 +77,11 @@ export class EnumFactory extends EnumFactoryBase {
         super();
     }
 
-    public build<T extends EnumItem>(typer: Type<T> | string): IEnum<T> {
-        const enumName = ioc.getKey(typer);
-        this.m_EnumCache[enumName] ??= new Enum(typer, this.m_EnumLoadFunctionMap[enumName] ?? this.m_EnumLoadFunctionMap[''], this.m_EnumReduce[enumName] ?? {});
-        return this.m_EnumCache[enumName];
+    public build<T extends EnumItem>(option: EnumBuildOption<T>): IEnum<T> {
+        const enumName = ioc.getKey(option.typer);
+        option.srvNo ??= 0;
+        this.m_EnumCache[option.srvNo] ??= {};
+        this.m_EnumCache[option.srvNo][enumName] ??= new Enum(option.typer, this.m_EnumLoadFunctionMap[enumName] ?? this.m_EnumLoadFunctionMap[''], this.m_EnumReduce[enumName] ?? {});
+        return this.m_EnumCache[option.srvNo][enumName];
     }
 }

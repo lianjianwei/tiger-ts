@@ -15,7 +15,10 @@ describe('src/service/parser/enum-value.ts', () => {
 
             const mockEnum = new Mock<IEnum<enum_.ValueTypeData>>();
             mockEnumFactory.exceptReturn(
-                r => r.build(enum_.ValueTypeData),
+                r => r.build({
+                    typer: enum_.ValueTypeData,
+                    srvNo: 0
+                }),
                 mockEnum.actual
             );
 
@@ -31,7 +34,7 @@ describe('src/service/parser/enum-value.ts', () => {
                 }
             );
 
-            const res = self.parse("灵石");
+            const res = self.parse("灵石", 0);
             deepStrictEqual(res, 1002);
         });
     });

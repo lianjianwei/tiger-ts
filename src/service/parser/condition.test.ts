@@ -15,7 +15,10 @@ describe('src/service/parser/condition.ts', () => {
 
             const mockEnum = new Mock<IEnum<enum_.ValueTypeData>>();
             mockEnumFactory.exceptReturn(
-                r => r.build(enum_.ValueTypeData),
+                r => r.build({
+                    typer: enum_.ValueTypeData,
+                    srvNo: 0
+                }),
                 mockEnum.actual
             );
 
@@ -31,7 +34,7 @@ describe('src/service/parser/condition.ts', () => {
                 }
             );
 
-            const res = self.parse("银两=10\n等级>=10");
+            const res = self.parse("银两=10\n等级>=10", 0);
             deepStrictEqual(res, [[
                 { valueType: 1002, count: 10, op: '=' },
                 { valueType: 1001, count: 10, op: '>=' },
@@ -44,7 +47,10 @@ describe('src/service/parser/condition.ts', () => {
 
             const mockEnum = new Mock<IEnum<enum_.ValueTypeData>>();
             mockEnumFactory.exceptReturn(
-                r => r.build(enum_.ValueTypeData),
+                r => r.build({
+                    typer: enum_.ValueTypeData,
+                    srvNo: 0
+                }),
                 mockEnum.actual
             );
 
@@ -60,7 +66,7 @@ describe('src/service/parser/condition.ts', () => {
                 }
             );
 
-            const res = self.parse("银两!=50\n\n\n\n等级<=20\n银两>=6000");
+            const res = self.parse("银两!=50\n\n\n\n等级<=20\n银两>=6000", 0);
             deepStrictEqual(res, [
                 [{ valueType: 1002, count: 50, op: '!=' }],
                 [

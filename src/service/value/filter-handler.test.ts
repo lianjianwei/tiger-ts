@@ -9,7 +9,7 @@ describe('src/service/value/filter-handler.ts', () => {
     describe('.updateHandle(ctx: ValueHandlerContext)', () => {
         it('ok', async () => {
             const mockEnumFactory = new Mock<EnumFactoryBase>();
-            const self = new Self(mockEnumFactory.actual);
+            const self = new Self(mockEnumFactory.actual, 0);
 
             const ownValue = {
                 1: 2
@@ -27,7 +27,10 @@ describe('src/service/value/filter-handler.ts', () => {
                 }
             });
             mockEnumFactory.exceptReturn(
-                r => r.build(enum_.ValueTypeData),
+                r => r.build({
+                    typer: enum_.ValueTypeData,
+                    srvNo: 0
+                }),
                 mockEnum.actual
             );
 

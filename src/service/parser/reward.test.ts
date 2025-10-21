@@ -15,7 +15,10 @@ describe('src/service/parser/reward.ts', () => {
 
             const mockEnum = new Mock<IEnum<enum_.ValueTypeData>>();
             mockEnumFactory.exceptReturn(
-                r => r.build(enum_.ValueTypeData),
+                r => r.build({
+                    typer: enum_.ValueTypeData,
+                    srvNo: 0
+                }),
                 mockEnum.actual
             );
 
@@ -31,7 +34,7 @@ describe('src/service/parser/reward.ts', () => {
                 }
             );
 
-            const res = self.parse("银两*10*100\n等级*10*50\n\n\n银两*-500*100");
+            const res = self.parse("银两*10*100\n等级*10*50\n\n\n银两*-500*100", 0);
             deepStrictEqual(res, [
                 [
                     { valueType: 1002, count: 10, weight: 100 },

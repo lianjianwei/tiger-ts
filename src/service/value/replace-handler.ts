@@ -16,13 +16,17 @@ import { enum_ } from '../../model';
 export class ReplaceValueHandler extends ValueHandlerBase {
 
     public constructor(
-        private m_EnumFactory: EnumFactoryBase
+        private m_EnumFactory: EnumFactoryBase,
+        private m_SrvNo: number
     ) {
         super();
     }
 
     public async updateHandle(ctx: ValueHandlerContext) {
-        const allItem = await this.m_EnumFactory.build(enum_.ValueTypeData).allItem;
+        const allItem = await this.m_EnumFactory.build({
+            typer: enum_.ValueTypeData,
+            srvNo: this.m_SrvNo
+        }).allItem;
         if (allItem[ctx.value.valueType]?.isReplace)
             ctx.valueService.ownValue[ctx.value.valueType] = 0;
 

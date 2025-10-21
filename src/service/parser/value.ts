@@ -8,7 +8,7 @@ export class ValueParser implements IParser<Value[]> {
         private m_Regex = /^([^*=<>!#-]+)\*(-?[0-9.]+)$/
     ) { }
 
-    public parse(data: any) {
+    public parse(data: any, srvNo: number) {
         if (data == null)
             return null;
 
@@ -17,7 +17,10 @@ export class ValueParser implements IParser<Value[]> {
 
         const lines = data.split("\n");
         const values: Value[] = [];
-        const textOfValueType = this.m_EnumFactory.build(enum_.ValueTypeData).getReduce(enum_.TextOfValueType);
+        const textOfValueType = this.m_EnumFactory.build({
+            typer: enum_.ValueTypeData,
+            srvNo
+        }).getReduce(enum_.TextOfValueType);
         for (const line of lines) {
             if (!line)
                 continue;
