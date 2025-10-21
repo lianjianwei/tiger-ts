@@ -26,6 +26,4 @@ export class YamlConfigLoader extends ConfigLoaderBase {
         const key = ioc.getKey(typer);
         return content[key] as T;
     }
-
-    public async flush<T>(_typer?: Type<T> | string) { }
 }

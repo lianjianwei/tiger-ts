@@ -7,7 +7,7 @@ export class EnumItem {
 
 export type EnumReduceFunction<T extends EnumItem, R> = (memo: R, r: T) => R;
 
-export type EnumLoadFunction<T extends EnumItem> = (typer: Type<T> | string) => Promise<{ [value: number]: T; }>;
+export type EnumLoadFunction<T extends EnumItem> = (typer: Type<T> | string, srvNo: number) => Promise<{ [value: number]: T; }>;
 
 export type EnumBuildOption<T extends EnumItem> = {
     typer: Type<T> | string;

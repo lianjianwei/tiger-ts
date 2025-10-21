@@ -22,11 +22,4 @@ export abstract class ConfigLoaderBase {
      * @param typer 类型
      */
     public abstract load<T>(typer: Type<T> | string): Promise<T>;
-
-    /**
-     * 刷新配置
-     * 
-     * @param typer 类型
-     */
-    public abstract flush<T>(typer?: Type<T> | string): Promise<void>;
 }

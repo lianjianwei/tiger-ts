@@ -7,7 +7,7 @@ export class Enum<T extends EnumItem> implements IEnum<T> {
 
     private m_AllItem: Promise<{ [value: number]: T; }>;
     public get allItem() {
-        this.m_AllItem ??= this.m_EnumLoadFunction(this.m_Typer);
+        this.m_AllItem ??= this.m_EnumLoadFunction(this.m_Typer, this.m_SrvNo);
         return this.m_AllItem;
     }
 
@@ -26,6 +26,7 @@ export class Enum<T extends EnumItem> implements IEnum<T> {
 
     public constructor(
         private m_Typer: Type<T> | string,
+        private m_SrvNo: number,
         private m_EnumLoadFunction: EnumLoadFunction<T>,
         private m_NameReduce: { [name: string]: EnumReduceFunction<T, any>; }
     ) { }
@@ -81,7 +82,7 @@ export class EnumFactory extends EnumFactoryBase {
         const enumName = ioc.getKey(option.typer);
         option.srvNo ??= 0;
         this.m_EnumCache[option.srvNo] ??= {};
-        this.m_EnumCache[option.srvNo][enumName] ??= new Enum(option.typer, this.m_EnumLoadFunctionMap[enumName] ?? this.m_EnumLoadFunctionMap[''], this.m_EnumReduce[enumName] ?? {});
+        this.m_EnumCache[option.srvNo][enumName] ??= new Enum(option.typer, option.srvNo, this.m_EnumLoadFunctionMap[enumName] ?? this.m_EnumLoadFunctionMap[''], this.m_EnumReduce[enumName] ?? {});
         return this.m_EnumCache[option.srvNo][enumName];
     }
 }

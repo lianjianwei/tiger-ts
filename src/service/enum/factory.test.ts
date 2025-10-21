@@ -18,7 +18,7 @@ class TextTest {
 describe('src/service/enum/factory.ts', () => {
     describe('.getReduce<TReduce>(reduceTyper: Type<TReduce>)', () => {
         it('ok', async () => {
-            const self = new Self(TestData, async (_typer: Type<TestData> | string) => {
+            const self = new Self(TestData, 0, async (_typer: Type<TestData> | string) => {
                 return {
                     1: {
                         value: 1,
