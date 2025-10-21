@@ -5,24 +5,23 @@
 
 1. API定义
     * koa
-2. 内存缓存模块
-3. 配置加载器
+2. 配置加载器
     * yaml 文件配置加载器
-4. 枚举工厂
-5. 文件工厂
+3. 枚举工厂
+4. 文件工厂
     * IO文件工厂
-6. 数值服务
+5. 数值服务
     * 默认数值处理器（累加）
     * 覆盖数值处理器
     * 过滤数值处理器
-7. 数据库工厂
+6. 数据库工厂
     * mongo 数据库工厂
-8. 自定义异常类
-9. 测试 mock
-10. 日志模块
+7. 自定义异常类
+8. 测试 mock
+9. 日志模块
     * console 日志
     * log4js 日志
-11. 解析器
+10. 解析器
     * number
     * string
     * bool
@@ -31,12 +30,11 @@
     * Reward
     * Condition
     * EnumValue
-12. 字符串生成器
+11. 字符串生成器
     * Mongo ObjectId 生成器
-13. 线程
-14. 分布式锁
+12. 线程
+13. 分布式锁
     * redis 分布式锁
-15. 配置管理器
 
 ## 安装
 
@@ -54,6 +52,7 @@ import './login';
 ```typescript
 // src/api/login.ts
 import { Length } from 'class-validator';
+import Router from 'koa-router';
 import { IApi, service } from 'tiger-ts';
 
 class LoginRequestBody {
@@ -64,13 +63,11 @@ class LoginRequestBody {
     password: string;
 }
 
-@service.Api({ route: '/mh/login', validateType: LoginRequestBody })
-@Service({ transient: true })
-export default class LoginApi implements IApi<LoginRequestBody> {
-
-    public body: LoginRequestBody;
-
-    public async call() {
+@service.Api({ route: '/login', method: 'POST', validateType: LoginRequestBody })
+@Service()
+export default class LoginApi implements IApi {
+    public async call(ctx: Router.RouterContext) {
+        const body = ctx.request.body as LoginRequestBody;
         if (body.account == 'admin' && body.password == '123456')
             return true;
 
@@ -89,7 +86,7 @@ import { service } from 'tiger-ts';
     const apiFactory = new service.ApiFactory();
     new service.KoaApiPort([
         service.koaCorsOption(),
-        service.koaBodyParserOption(),
+        service.koaBodyOption(),
         service.koaPostOption(apiFactory),
         service.koaPortOption('app', 30000, '1.0.0')
     ]).listen();

@@ -1,3 +1,5 @@
 src/
-build.tsconfig.json
+tsconfig.build.json
 tsconfig.json
+.editorconfig
+package-lock.json
