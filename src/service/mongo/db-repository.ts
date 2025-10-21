@@ -1,8 +1,9 @@
-import { FindOptions, MongoClient, SortDirection, WithId, Document } from 'mongodb';
+import { FindOptions, SortDirection, WithId, Document } from 'mongodb';
 
+import { MongoDbFactory } from './db-factory';
 import { MongoUnitOfWork } from './unit-of-work';
 import { ioc } from '../ioc';
-import { BuilderOption, DbFactoryBase, DbModel, IDbRepository, QueryOption } from '../../contract';
+import { BuilderOption, DbModel, IDbRepository, QueryOption } from '../../contract';
 
 export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
 
@@ -25,14 +26,14 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public constructor(
-        private m_DbFactory: DbFactoryBase,
+        private m_DbFactory: MongoDbFactory,
         private m_Opt: BuilderOption<T>
     ) {
         this.m_Model = ioc.getKey(this.m_Opt.model);
     }
 
     public async add(entry: T) {
-        this.uow.registerAdd(this.m_Model, entry);
+        this.uow.registerAdd(this.m_Model, entry, this.m_Opt.srvNo);
         if (this.isTx)
             return;
 
@@ -44,7 +45,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
             return;
 
         for (const entry of entries)
-            this.uow.registerAdd(this.m_Model, entry);
+            this.uow.registerAdd(this.m_Model, entry, this.m_Opt.srvNo);
 
         if (this.isTx)
             return;
@@ -53,7 +54,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public async remove(where: any) {
-        this.uow.registerRemove(this.m_Model, where);
+        this.uow.registerRemove(this.m_Model, where, this.m_Opt.srvNo);
         if (this.isTx)
             return;
 
@@ -61,7 +62,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public async removeById(id: string) {
-        this.uow.registerRemove(this.m_Model, { id });
+        this.uow.registerRemove(this.m_Model, { id }, this.m_Opt.srvNo);
         if (this.isTx)
             return;
 
@@ -69,7 +70,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public async save(entry: T) {
-        this.uow.registerSave(this.m_Model, entry);
+        this.uow.registerSave(this.m_Model, entry, this.m_Opt.srvNo);
         if (this.isTx)
             return;
 
@@ -77,7 +78,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public async count(where: any = {}) {
-        const collection = await this.getCollection();
+        const collection = await this.m_DbFactory.getCollection(this.m_Opt.srvNo, this.m_Model);
 
         if (where.id)
             where._id ??= where.id;
@@ -86,7 +87,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public async findOne(opt: QueryOption = {}) {
-        const collection = await this.getCollection();
+        const collection = await this.m_DbFactory.getCollection(this.m_Opt.srvNo, this.m_Model);
 
         if (opt.where?.id && !opt.where._id) {
             opt.where = Object.assign({}, opt.where);
@@ -117,7 +118,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
     }
 
     public async findAll(opt: QueryOption = {}) {
-        const collection = await this.getCollection();
+        const collection = await this.m_DbFactory.getCollection(this.m_Opt.srvNo, this.m_Model);
 
         if (opt.where?.id && !opt.where._id) {
             opt.where = Object.assign({}, opt.where);
@@ -146,12 +147,6 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
         const cursor = collection.find(opt.where, options);
         const entries = await cursor.toArray();
         return entries.map(r => this.docToModel(r));
-    }
-
-    private async getCollection() {
-        const client = await this.m_DbFactory.getOriginConnection<MongoClient>();
-        const db = client.db();
-        return db.collection(this.m_Model);
     }
 
     private docToModel(doc: WithId<Document>): T {

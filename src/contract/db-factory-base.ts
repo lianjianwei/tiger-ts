@@ -29,6 +29,7 @@ export interface IUnitOfWork {
 export type BuilderOption<T extends DbModel> = {
     model: Type<T> | string;
     uow?: IUnitOfWork;
+    srvNo?: number;
 };
 
 export type QueryOption = Partial<{
@@ -106,8 +107,10 @@ export interface IDbRepository<T extends DbModel> {
 export abstract class DbFactoryBase {
     /**
      * 获取原始数据库连接
+     * 
+     * @param srvNo 服务器编号 默认 0 
      */
-    public abstract getOriginConnection<T>(): Promise<T>;
+    public abstract getOriginConnection<T>(srvNo?: number): Promise<T>;
 
     /**
      * 构建数据仓储对象
@@ -120,4 +123,11 @@ export abstract class DbFactoryBase {
      * 获取工作单元
      */
     public abstract uow(): IUnitOfWork;
+
+    /**
+     * 关闭数据库连接
+     * 
+     * @param srvNo 服务器编号 默认 0 
+     */
+    public abstract close(srvNo: number): Promise<void>;
 }

@@ -1,50 +1,50 @@
 import { notStrictEqual, strictEqual } from 'assert';
-import { ClientSession, Collection, Db, Document, MongoClient } from 'mongodb';
+import { ClientSession, Collection, Document, MongoClient } from 'mongodb';
 
+import { MongoDbFactory } from './db-factory';
 import { MongoUnitOfWork as Self } from './unit-of-work';
 import { Mock } from '../mock';
-import { DbFactoryBase } from '../../contract';
 
 describe('src/service/mongo/unit-of-work.ts', () => {
     describe('.registerAdd(model: string, entry: DbModel)', () => {
         it('ok', async () => {
-            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockDbFactory = new Mock<MongoDbFactory>();
             const self = new Self(mockDbFactory.actual, {});
             self.registerAdd('TestModel', {
                 id: '1'
-            });
+            }, 0);
             const bulk = Reflect.get(self, 'm_Bulk');
-            strictEqual(bulk['TestModel'].length, 1);
+            strictEqual(bulk[0]['TestModel'].length, 1);
         });
     });
 
     describe('.registerRemove(model: string, where: any)', () => {
         it('ok', async () => {
-            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockDbFactory = new Mock<MongoDbFactory>();
             const self = new Self(mockDbFactory.actual, {});
             self.registerRemove('TestModel', {
                 id: '1'
-            });
+            }, 0);
             const bulk = Reflect.get(self, 'm_Bulk');
-            strictEqual(bulk['TestModel'].length, 1);
+            strictEqual(bulk[0]['TestModel'].length, 1);
         });
     });
 
     describe('.registerSave(model: string, entry: DbModel)', () => {
         it('ok', async () => {
-            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockDbFactory = new Mock<MongoDbFactory>();
             const self = new Self(mockDbFactory.actual, {});
             self.registerSave('TestModel', {
                 id: '1'
-            });
+            }, 0);
             const bulk = Reflect.get(self, 'm_Bulk');
-            strictEqual(bulk['TestModel'].length, 1);
+            strictEqual(bulk[0]['TestModel'].length, 1);
         });
     });
 
     describe('.registerAfterCommit(action: Action, key?: string)', () => {
         it('ok', async () => {
-            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockDbFactory = new Mock<MongoDbFactory>();
             const self = new Self(mockDbFactory.actual, {});
             self.registerAfterCommit(() => { }, 'commit1');
             const afterAction = Reflect.get(self, 'm_AfterAction');
@@ -54,13 +54,13 @@ describe('src/service/mongo/unit-of-work.ts', () => {
 
     describe('.commit()', () => {
         it('ok', async () => {
-            const mockDbFactory = new Mock<DbFactoryBase>();
+            const mockDbFactory = new Mock<MongoDbFactory>();
             const self = new Self(mockDbFactory.actual, {});
-            self.registerAdd('TestModel', { id: '1' });
+            self.registerAdd('TestModel', { id: '1' }, 0);
 
             const mockMongoClient = new Mock<MongoClient>();
             mockDbFactory.exceptReturn(
-                r => r.getOriginConnection<MongoClient>(),
+                r => r.getOriginConnection<MongoClient>(0),
                 mockMongoClient.actual
             );
 
@@ -77,15 +77,9 @@ describe('src/service/mongo/unit-of-work.ts', () => {
                 mockClientSession.actual
             );
 
-            const mockDb = new Mock<Db>();
-            mockMongoClient.exceptReturn(
-                r => r.db(),
-                mockDb.actual
-            );
-
             const mockCollection = new Mock<Collection<Document>>();
-            mockDb.exceptReturn(
-                r => r.collection('TestModel'),
+            mockDbFactory.exceptReturn(
+                r => r.getCollection(0, 'TestModel'),
                 mockCollection.actual
             );
 

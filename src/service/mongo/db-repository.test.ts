@@ -1,9 +1,10 @@
 import { deepStrictEqual, strictEqual } from 'assert';
-import { Collection, Db, Document, FindCursor, MongoClient, WithId } from 'mongodb';
+import { Collection, Document, FindCursor, WithId } from 'mongodb';
 
+import { MongoDbFactory } from './db-factory';
 import { MongoDbRepository } from './db-repository';
 import { Mock } from '../mock';
-import { BuilderOption, DbFactoryBase, DbModel } from '../../contract';
+import { BuilderOption, DbModel } from '../../contract';
 
 class Enum extends DbModel {
     public items: any[];
@@ -12,25 +13,13 @@ class Enum extends DbModel {
 describe('src/service/mongo/db-repository.ts', () => {
     describe('.count(where?: any)', () => {
         it('ok', async () => {
-            const mockDbFactory = new Mock<DbFactoryBase>();
-            const builderOption: BuilderOption<Enum> = { model: 'Enum' };
+            const mockDbFactory = new Mock<MongoDbFactory>();
+            const builderOption: BuilderOption<Enum> = { model: 'Enum', srvNo: 0 };
             const self = new MongoDbRepository<Enum>(mockDbFactory.actual, builderOption);
 
-            const mockMongoClient = new Mock<MongoClient>();
-            mockDbFactory.exceptReturn(
-                r => r.getOriginConnection<MongoClient>(),
-                mockMongoClient.actual
-            );
-
-            const mockDb = new Mock<Db>();
-            mockMongoClient.exceptReturn(
-                r => r.db(),
-                mockDb.actual
-            );
-
             const mockCollection = new Mock<Collection>();
-            mockDb.exceptReturn(
-                r => r.collection('Enum'),
+            mockDbFactory.exceptReturn(
+                r => r.getCollection(0, 'Enum'),
                 mockCollection.actual
             );
 
@@ -46,25 +35,13 @@ describe('src/service/mongo/db-repository.ts', () => {
 
     describe('.findOne(opt?: QueryOption)', () => {
         it('ok', async () => {
-            const mockDbFactory = new Mock<DbFactoryBase>();
-            const builderOption: BuilderOption<Enum> = { model: 'Enum' };
+            const mockDbFactory = new Mock<MongoDbFactory>();
+            const builderOption: BuilderOption<Enum> = { model: 'Enum', srvNo: 0 };
             const self = new MongoDbRepository<Enum>(mockDbFactory.actual, builderOption);
 
-            const mockMongoClient = new Mock<MongoClient>();
-            mockDbFactory.exceptReturn(
-                r => r.getOriginConnection<MongoClient>(),
-                mockMongoClient.actual
-            );
-
-            const mockDb = new Mock<Db>();
-            mockMongoClient.exceptReturn(
-                r => r.db(),
-                mockDb.actual
-            );
-
             const mockCollection = new Mock<Collection>();
-            mockDb.exceptReturn(
-                r => r.collection('Enum'),
+            mockDbFactory.exceptReturn(
+                r => r.getCollection(0, 'Enum'),
                 mockCollection.actual
             );
 
@@ -102,25 +79,13 @@ describe('src/service/mongo/db-repository.ts', () => {
 
     describe('.findAll(opt?: QueryOption)', () => {
         it('ok', async () => {
-            const mockDbFactory = new Mock<DbFactoryBase>();
-            const builderOption: BuilderOption<Enum> = { model: 'Enum' };
+            const mockDbFactory = new Mock<MongoDbFactory>();
+            const builderOption: BuilderOption<Enum> = { model: 'Enum', srvNo: 0 };
             const self = new MongoDbRepository<Enum>(mockDbFactory.actual, builderOption);
 
-            const mockMongoClient = new Mock<MongoClient>();
-            mockDbFactory.exceptReturn(
-                r => r.getOriginConnection<MongoClient>(),
-                mockMongoClient.actual
-            );
-
-            const mockDb = new Mock<Db>();
-            mockMongoClient.exceptReturn(
-                r => r.db(),
-                mockDb.actual
-            );
-
             const mockCollection = new Mock<Collection>();
-            mockDb.exceptReturn(
-                r => r.collection('Enum'),
+            mockDbFactory.exceptReturn(
+                r => r.getCollection(0, 'Enum'),
                 mockCollection.actual
             );
 
@@ -165,25 +130,13 @@ describe('src/service/mongo/db-repository.ts', () => {
 
     describe('.find(opt?: QueryOption)', () => {
         it('ok', async () => {
-            const mockDbFactory = new Mock<DbFactoryBase>();
-            const builderOption: BuilderOption<Enum> = { model: 'Enum' };
+            const mockDbFactory = new Mock<MongoDbFactory>();
+            const builderOption: BuilderOption<Enum> = { model: 'Enum', srvNo: 0 };
             const self = new MongoDbRepository<Enum>(mockDbFactory.actual, builderOption);
 
-            const mockMongoClient = new Mock<MongoClient>();
-            mockDbFactory.exceptReturn(
-                r => r.getOriginConnection<MongoClient>(),
-                mockMongoClient.actual
-            );
-
-            const mockDb = new Mock<Db>();
-            mockMongoClient.exceptReturn(
-                r => r.db(),
-                mockDb.actual
-            );
-
             const mockCollection = new Mock<Collection>();
-            mockDb.exceptReturn(
-                r => r.collection('Enum'),
+            mockDbFactory.exceptReturn(
+                r => r.getCollection(0, 'Enum'),
                 mockCollection.actual
             );
 

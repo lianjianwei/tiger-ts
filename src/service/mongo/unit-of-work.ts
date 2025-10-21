@@ -1,6 +1,7 @@
 import { AnyBulkWriteOperation, BulkWriteOptions, Document, MongoClient } from 'mongodb';
 
-import { Action, DbFactoryBase, DbModel, IUnitOfWork } from '../../contract';
+import { MongoDbFactory } from './db-factory';
+import { Action, DbModel, IUnitOfWork } from '../../contract';
 
 export class MongoUnitOfWork implements IUnitOfWork {
 
@@ -9,41 +10,46 @@ export class MongoUnitOfWork implements IUnitOfWork {
     } = {};
 
     private m_Bulk: {
-        [model: string]: AnyBulkWriteOperation<Document>[];
+        [srvNo: number]: {
+            [model: string]: AnyBulkWriteOperation<Document>[];
+        }
     } = {};
 
     public constructor(
-        private m_DbFactory: DbFactoryBase,
+        private m_DbFactory: MongoDbFactory,
         private m_BulkWriteOptions: BulkWriteOptions
     ) { }
 
-    public registerAdd(model: string, entry: DbModel) {
-        this.m_Bulk[model] ??= [];
-        this.m_Bulk[model].push({
+    public registerAdd(model: string, entry: DbModel, srvNo: number) {
+        this.m_Bulk[srvNo] ??= {};
+        this.m_Bulk[srvNo][model] ??= [];
+        this.m_Bulk[srvNo][model].push({
             insertOne: {
                 document: this.toDoc(entry)
             }
         });
     }
 
-    public registerRemove(model: string, where: any) {
-        this.m_Bulk[model] ??= [];
+    public registerRemove(model: string, where: any, srvNo: number) {
+        this.m_Bulk[srvNo] ??= {};
+        this.m_Bulk[srvNo][model] ??= [];
         const filter = Object.assign({}, where || {});
         if (filter.id && !filter._id) {
             filter._id = filter.id;
             delete filter.id;
         }
-        this.m_Bulk[model].push({
+        this.m_Bulk[srvNo][model].push({
             deleteMany: {
                 filter: filter
             }
         });
     }
 
-    public registerSave(model: string, entry: DbModel) {
-        this.m_Bulk[model] ??= [];
+    public registerSave(model: string, entry: DbModel, srvNo: number) {
+        this.m_Bulk[srvNo] ??= {};
+        this.m_Bulk[srvNo][model] ??= [];
         const doc = this.toDoc(entry);
-        this.m_Bulk[model].push({
+        this.m_Bulk[srvNo][model].push({
             updateOne: {
                 filter: {
                     _id: doc._id
@@ -66,8 +72,9 @@ export class MongoUnitOfWork implements IUnitOfWork {
         this.m_Bulk = {};
         this.m_AfterAction = {};
 
-        if (bulks.length) {
-            const client = await this.m_DbFactory.getOriginConnection<MongoClient>();
+        for (const [srvNoStr, srvBulk] of bulks) {
+            const srvNo = Number(srvNoStr);
+            const client = await this.m_DbFactory.getOriginConnection<MongoClient>(srvNo);
             const session = client.startSession({
                 defaultTransactionOptions: {
                     writeConcern: {
@@ -76,15 +83,13 @@ export class MongoUnitOfWork implements IUnitOfWork {
                     maxCommitTimeMS: 10000
                 }
             });
-            const db = client.db();
-            for (const [model, ops] of bulks) {
-                const collection = db.collection(model);
+            for (const [model, ops] of Object.entries(srvBulk)) {
+                const collection = await this.m_DbFactory.getCollection(srvNo, model);
                 await collection.bulkWrite(ops, {
                     ...this.m_BulkWriteOptions,
                     session: session
                 });
             }
-
             await session.endSession();
         }
 
