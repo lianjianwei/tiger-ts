@@ -4,7 +4,7 @@ import Koa from 'koa';
 import Router from 'koa-router';
 
 import { KoaOption } from './option';
-import { API_METEDATA } from '../api';
+import { API_METEDATA } from '../../decorator';
 import { CustomError } from '../error';
 import { ApiFactoryBase, LogFactoryBase } from '../../contract';
 import { enum_ } from '../../model';

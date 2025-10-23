@@ -1,4 +1,4 @@
-import { IApi, Type } from '../../contract';
+import { IApi, Type } from '../contract';
 
 export type HttpMethod = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'ALL' | 'HEAD' | 'OPTIONS';
 

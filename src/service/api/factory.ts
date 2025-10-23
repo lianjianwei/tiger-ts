@@ -1,8 +1,8 @@
 import { Container } from 'typedi';
 
-import { API_METEDATA } from './decorator';
 import { CustomError } from '../error';
 import { ApiFactoryBase, IApi } from '../../contract';
+import { API_METEDATA } from '../../decorator';
 import { enum_ } from '../../model';
 
 export class ApiFactory extends ApiFactoryBase {

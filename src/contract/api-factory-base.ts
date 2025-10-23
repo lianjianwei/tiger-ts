@@ -1,9 +1,17 @@
 import Router from 'koa-router';
+import { Files } from 'formidable';
 
 import { Type } from './type';
 
-export interface IApi {
-    call(ctx: Router.RouterContext): Promise<any>;
+export type RouterContext<T = any, S = any> = Router.RouterContext<S> & {
+    request: Router.RouterContext['request'] & {
+        body?: T;
+        files?: Files;
+    };
+};
+
+export interface IApi<TBody = any, TSession = any> {
+    call(ctx: RouterContext<TBody, TSession>): Promise<any>;
 }
 
 export abstract class ApiFactoryBase {
