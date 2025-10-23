@@ -1,3 +1,4 @@
+examples/
 src/
 tsconfig.build.json
 tsconfig.json

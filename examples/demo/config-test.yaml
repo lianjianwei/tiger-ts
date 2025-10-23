@@ -1,0 +1,3 @@
+App:
+    port: 3000
+    name: tiger-ts-demo

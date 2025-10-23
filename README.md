@@ -42,53 +42,6 @@
 npm install tiger-ts
 ```
 
-## 使用
+## 项目示例
 
-```typescript
-// src/api/index.ts
-import './login';
-```
-
-```typescript
-// src/api/login.ts
-import { Length } from 'class-validator';
-import Router from 'koa-router';
-import { IApi, service } from 'tiger-ts';
-
-class LoginRequestBody {
-    @Length(5, 10, { message: '账号长度在5-10字符' })
-    account: string;
-
-    @Length(8, 18, { message: '密码长度在8-18字符' })
-    password: string;
-}
-
-@service.Api({ route: '/login', method: 'POST', validateType: LoginRequestBody })
-@Service()
-export default class LoginApi implements IApi {
-    public async call(ctx: Router.RouterContext) {
-        const body = ctx.request.body as LoginRequestBody;
-        if (body.account == 'admin' && body.password == '123456')
-            return true;
-
-        throw new service.CustomError(1000, '账号密码错误');
-    }
-}
-```
-
-```typescript
-// src/index.ts
-import './api';
-
-import { service } from 'tiger-ts';
-
-(async () => {
-    const apiFactory = new service.ApiFactory();
-    new service.KoaApiPort([
-        service.koaCorsOption(),
-        service.koaBodyOption(),
-        service.koaPostOption(apiFactory),
-        service.koaPortOption('app', 30000, '1.0.0')
-    ]).listen();
-})()
-```
+[demo 项目](./examples/demo/README.md)
