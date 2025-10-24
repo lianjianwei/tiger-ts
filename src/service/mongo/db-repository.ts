@@ -3,7 +3,7 @@ import { FindOptions, SortDirection, WithId, Document } from 'mongodb';
 import { MongoDbFactory } from './db-factory';
 import { MongoUnitOfWork } from './unit-of-work';
 import { ioc } from '../ioc';
-import { BuilderOption, DbModel, IDbRepository, QueryOption } from '../../contract';
+import { BuilderOption, DbModel, IDbRepository, IDType, QueryOption } from '../../contract';
 
 export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
 
@@ -61,7 +61,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
         await this.uow.commit();
     }
 
-    public async removeById(id: string) {
+    public async removeById(id: IDType) {
         this.uow.registerRemove(this.m_Model, { id }, this.m_Opt.srvNo);
         if (this.isTx)
             return;

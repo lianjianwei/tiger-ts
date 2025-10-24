@@ -1,7 +1,9 @@
 import { Type } from './type';
 
+export type IDType = string | number;
+
 export abstract class DbModel {
-    public id: string;
+    public id: IDType;
 }
 
 export type Action = () => Promise<void> | void;
@@ -70,7 +72,7 @@ export interface IDbRepository<T extends DbModel> {
      * 
      * @param id 实体ID
      */
-    removeById(id: string): Promise<void>;
+    removeById(id: IDType): Promise<void>;
 
     /**
      * 数据库保存
