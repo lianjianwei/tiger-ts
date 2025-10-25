@@ -7,14 +7,14 @@ import { BuilderOption, DbFactoryBase, DbModel, IDbRepository, IUnitOfWork } fro
 export class MongoDbFactory extends DbFactoryBase {
 
     private m_SrvMongoClientMap: {
-        [srvNo: number]: Promise<MongoClient>
+        [srvNo: number]: Promise<MongoClient>;
     } = {};
 
     private m_UrlMongoClientMap: {
         [url: string]: {
             client: MongoClient,
             count: number;
-        }
+        };
     } = {};
 
     private m_SrvUrlMap: {
@@ -43,7 +43,7 @@ export class MongoDbFactory extends DbFactoryBase {
                 this.m_SrvUrlMap[srvNo] = url;
                 this.m_UrlMongoClientMap[url].count++;
                 await this.m_UrlMongoClientMap[url].client.connect();
-                s(this.m_UrlMongoClientMap.client[url]);
+                s(this.m_UrlMongoClientMap[url].client);
             } catch (err) {
                 f(err);
             }
