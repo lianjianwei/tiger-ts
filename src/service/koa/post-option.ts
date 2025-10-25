@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import Koa from 'koa';
-import Router from 'koa-router';
+import Router from '@koa/router';
 
 import { KoaOption } from './option';
 import { API_METEDATA } from '../../decorator';

@@ -1,4 +1,4 @@
-import Router from 'koa-router';
+import Router from '@koa/router';
 import { Files } from 'formidable';
 
 import { Type } from './type';
