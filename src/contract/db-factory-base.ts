@@ -38,8 +38,7 @@ export type QueryOption = Partial<{
     where: any;
     skip: number;
     take: number;
-    order: string[];
-    orderByDesc: string[];
+    order: { field: string; direction: 'asc' | 'desc' }[];
 }>;
 
 /**

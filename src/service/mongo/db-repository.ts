@@ -102,13 +102,11 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
             options.limit = opt.take;
         if (opt.order) {
             options.sort = opt.order.reduce((memo, r) => {
-                memo.set(r, 1);
-                return memo;
-            }, new Map<string, SortDirection>());
-        }
-        if (opt.orderByDesc) {
-            options.sort = opt.order.reduce((memo, r) => {
-                memo.set(r, -1);
+                if (r.direction == 'asc') {
+                    memo.set(r.field, 1);
+                } else {
+                    memo.set(r.field, -1);
+                }
                 return memo;
             }, new Map<string, SortDirection>());
         }
@@ -133,13 +131,11 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
             options.limit = opt.take;
         if (opt.order) {
             options.sort = opt.order.reduce((memo, r) => {
-                memo.set(r, 1);
-                return memo;
-            }, new Map<string, SortDirection>());
-        }
-        if (opt.orderByDesc) {
-            options.sort = opt.order.reduce((memo, r) => {
-                memo.set(r, -1);
+                if (r.direction == 'asc') {
+                    memo.set(r.field, 1);
+                } else {
+                    memo.set(r.field, -1);
+                }
                 return memo;
             }, new Map<string, SortDirection>());
         }
