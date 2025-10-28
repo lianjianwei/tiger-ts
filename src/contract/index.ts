@@ -4,6 +4,7 @@ export * from './db-factory-base';
 export * from './enum-factory-base';
 export * from './file-factory-base';
 export * from './i-api-port';
+export * from './i-application-event';
 export * from './i-value-service';
 export * from './log-factory-base';
 export * from './mutex-base';
