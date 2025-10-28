@@ -8,6 +8,7 @@ export * from './i-value-service';
 export * from './log-factory-base';
 export * from './mutex-base';
 export * from './parser-factory-base';
+export * from './pub-sub-base';
 export * from './string-generator-base';
 export * from './thread-base';
 export * from './type';
