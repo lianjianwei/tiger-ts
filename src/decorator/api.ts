@@ -1,27 +1,18 @@
-import { IApi, Type } from '../contract';
-
-export type HttpMethod = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'ALL' | 'HEAD' | 'OPTIONS';
+import { ApiOption, IApi, Type } from '../contract';
 
 export const API_METEDATA: {
     [route: string]: {
         api: Type<IApi>;
-        method: HttpMethod;
-        validateType?: Type<any>;
+        options: ApiOption;
     };
 } = {};
 
-export type ApiOption = {
-    route: string;
-    method?: HttpMethod;
-    validateType?: Type<any>;
-};
-
-export function Api(opt: ApiOption): ClassDecorator {
+export function Api(route: string, option: ApiOption = {}): ClassDecorator {
     return (target: any) => {
-        API_METEDATA[opt.route] = {
+        option.method ??= 'POST';
+        API_METEDATA[route] = {
             api: target,
-            method: opt.method || 'POST',
-            validateType: opt.validateType
+            options: option
         };
     };
 }

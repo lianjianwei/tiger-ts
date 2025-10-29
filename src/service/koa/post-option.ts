@@ -14,7 +14,7 @@ export function koaPostOption(apiFactory: ApiFactoryBase, logFactory: LogFactory
         const router = new Router();
 
         for (const [route, data] of Object.entries(API_METEDATA)) {
-            router[data.method.toLowerCase()](route, async (ctx: Router.RouterContext) => {
+            router[data.options.method.toLowerCase()](route, async (ctx: Router.RouterContext) => {
                 const log = logFactory.build();
                 log.addField('route', ctx.request.path)
                     .addField('header', ctx.request.header)
@@ -24,18 +24,22 @@ export function koaPostOption(apiFactory: ApiFactoryBase, logFactory: LogFactory
 
                 const beginOn = Date.now();
                 try {
-                    const { api, validateType } = apiFactory.build(ctx.request.path);
-                    if (validateType) {
-                        const body = plainToInstance(validateType, ctx.request.body);
+                    const { api, options } = apiFactory.build(ctx.request.path);
+                    if (options.validateType) {
+                        const body = plainToInstance(options.validateType, ctx.request.body);
                         const res = await validate(body);
                         if (res.length)
                             throw new CustomError(enum_.ErrorCode.invalidParams, res);
                     }
                     const res = await api.call(ctx);
-                    ctx.body = {
-                        err: enum_.ErrorCode.success,
-                        data: res
-                    };
+                    if (options.origin) {
+                        ctx.body = res;
+                    } else {
+                        ctx.body = {
+                            err: enum_.ErrorCode.success,
+                            data: res
+                        };
+                    }
                     log.addField('timeDiff', (Date.now() - beginOn))
                         .addField('response', ctx.body)
                         .debug();

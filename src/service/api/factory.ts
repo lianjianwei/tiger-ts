@@ -12,7 +12,7 @@ export class ApiFactory extends ApiFactoryBase {
 
         return {
             api: Container.get<IApi>(API_METEDATA[route].api),
-            validateType: API_METEDATA[route].validateType
+            options: API_METEDATA[route].options
         };
     }
 }
