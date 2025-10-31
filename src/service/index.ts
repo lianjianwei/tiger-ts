@@ -10,5 +10,6 @@ export * from './mock';
 export * from './mongo';
 export * from './parser';
 export * from './redis';
+export * from './sequelize';
 export * from './value';
 export * from './yaml';
