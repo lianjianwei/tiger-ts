@@ -10,10 +10,21 @@ export class SequelizeDbFactory extends DbFactoryBase {
     private m_SrvSequelizeClientMap: {
         [srvNo: number]: Promise<Sequelize>;
     } = {};
+    
+    private m_UrlSequelizeClientMap: {
+        [url: string]: {
+            client: Sequelize,
+            count: number;
+        };
+    } = {};
+
+    private m_SrvUrlMap: {
+        [srvNo: number]: string;
+    } = {};
 
     public constructor(
         private m_Option: Options,
-        private m_GetClientFunction: (srvNo: number) => Promise<Sequelize>
+        private m_GetClientFunction: (srvNo: number) => Promise<Options>
     ) {
         super();
     }
@@ -21,7 +32,14 @@ export class SequelizeDbFactory extends DbFactoryBase {
     public getOriginConnection<T>(srvNo = 0) {
         this.m_SrvSequelizeClientMap[srvNo] ??= new Promise<Sequelize>(async (s, f) => {
             try {
-                const client = srvNo ? new Sequelize(this.m_Option) : await this.m_GetClientFunction(srvNo);
+                const key = this.getKey(srvNo ? await this.m_GetClientFunction(srvNo) : this.m_Option);
+                this.m_UrlSequelizeClientMap[key] ??= {
+                    client: new Sequelize(key, this.m_Option),
+                    count: 0,
+                };
+                this.m_SrvUrlMap[srvNo] = key;
+                this.m_UrlSequelizeClientMap[key].count++;
+                const client = this.m_UrlSequelizeClientMap[key].client;
                 await client.authenticate();
                 s(client);
             } catch (error) {
@@ -29,6 +47,10 @@ export class SequelizeDbFactory extends DbFactoryBase {
             }
         });
         return this.m_SrvSequelizeClientMap[srvNo] as Promise<T>;
+    }
+
+    private getKey(options: Options) {
+        return `${options.host}:${options.port}/${options.database}`;
     }
 
     public build<T extends DbModel>(opt: BuilderOption<T>): IDbRepository<T> {
@@ -40,33 +62,52 @@ export class SequelizeDbFactory extends DbFactoryBase {
     }
 
     public async close(srvNo: number) {
-        const clientPromise = this.m_SrvSequelizeClientMap[srvNo];
-        if (clientPromise) {
+        if (this.m_SrvSequelizeClientMap[srvNo]) {
+            const key = this.m_SrvUrlMap[srvNo];
             delete this.m_SrvSequelizeClientMap[srvNo];
-            const client = await clientPromise;
-            await client.close();
+            delete this.m_SrvUrlMap[srvNo];
+            const urlSequelizeClient = this.m_UrlSequelizeClientMap[key];
+            if (urlSequelizeClient) {
+                urlSequelizeClient.count--;
+                if (urlSequelizeClient.count <= 0) {
+                    await urlSequelizeClient.client.close();
+                }
+            }
         }
     }
 
-    public async getModel(modelName: string, srvNo = 0) {
+    /**
+     * 实际模型名称为 `${name}-${srvNo}` 或 `${name}`，根据服务器编号是否为0来判断。
+     * 实际表名为 `${tableName}_${srvNo}` 或 `${tableName}`，根据服务器编号是否为0来判断。
+     * 
+     * @param name 模型名称
+     * @param srvNo 服务器编号
+     * @returns 
+     */
+    public async getModel(name: string, srvNo = 0) {
         const client = await this.getOriginConnection<Sequelize>(srvNo);
+        const modelName = srvNo ? `${name}-${srvNo}` : name;
         const model = client.models[modelName]
         if (model)
             return model;
 
-        const columnMetadata = COLUMN_METADATA[modelName];
+        const columnMetadata = COLUMN_METADATA[name];
         if (!columnMetadata)
-            throw new Error(`Model ${modelName} not defined.`);
+            throw new Error(`Model ${name} not defined.`);
 
         const fields = columnMetadata.reduce((memo, r) => {
             memo[r.attributeName] = r.option;
             return memo;
         }, {});
 
+        const tableName = TABLE_METADATA[name]?.options.tableName;
+        const actualTableName = srvNo ? `${tableName}_${srvNo}` : tableName;
+
         return client.define(modelName, fields, {
             timestamps: false,
             underscored: false,
-            ...TABLE_METADATA[modelName]?.options
+            ...TABLE_METADATA[name]?.options,
+            tableName: actualTableName
         });
     }
 }

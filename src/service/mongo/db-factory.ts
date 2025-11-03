@@ -31,8 +31,7 @@ export class MongoDbFactory extends DbFactoryBase {
         super();
     }
 
-    public getOriginConnection<T>(srvNo?: number) {
-        srvNo ??= 0;
+    public getOriginConnection<T>(srvNo = 0) {
         this.m_SrvMongoClientMap[srvNo] ??= new Promise<MongoClient>(async (s, f) => {
             try {
                 const url = srvNo ? await this.m_GetMongoUrl(srvNo) : this.m_Url;
