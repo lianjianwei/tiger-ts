@@ -32,9 +32,10 @@ export class SequelizeDbFactory extends DbFactoryBase {
     public getOriginConnection<T>(srvNo = 0) {
         this.m_SrvSequelizeClientMap[srvNo] ??= new Promise<Sequelize>(async (s, f) => {
             try {
-                const key = this.getKey(srvNo ? await this.m_GetClientFunction(srvNo) : this.m_Option);
+                let option = srvNo ? await this.m_GetClientFunction(srvNo) : this.m_Option;
+                const key = this.getKey(option);
                 this.m_UrlSequelizeClientMap[key] ??= {
-                    client: new Sequelize(key, this.m_Option),
+                    client: new Sequelize(option),
                     count: 0,
                 };
                 this.m_SrvUrlMap[srvNo] = key;
