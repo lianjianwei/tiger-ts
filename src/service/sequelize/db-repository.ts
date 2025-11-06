@@ -175,7 +175,7 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
         }
 
         for (const index of model.options.indexes) {
-            sqls.push(`CREATE INDEX IF NOT EXISTS "${index.name}" ON "${model.options.tableName}" (${index.fields.join(', ')});`);
+            sqls.push(`CREATE ${index.unique ? 'UNIQUE' : ''} INDEX ${index.concurrently ? 'CONCURRENTLY' : ''} IF NOT EXISTS "${index.name}" ON "${model.options.tableName}" ${index.using ? 'USING' + index.using : ''} (${index.fields.join(', ')});`);
         }
 
         return sqls;
