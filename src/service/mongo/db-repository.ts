@@ -3,7 +3,8 @@ import { FindOptions, SortDirection, WithId, Document } from 'mongodb';
 import { MongoDbFactory } from './db-factory';
 import { MongoUnitOfWork } from './unit-of-work';
 import { ioc } from '../ioc';
-import { BuilderOption, DbModel, IDbRepository, IDType, QueryOption } from '../../contract';
+import { BuilderOption, DbModel, IDbRepository, IDType, QueryOption, SyncOption } from '../../contract';
+import { COLLECTION_METADATA } from '../../decorator';
 
 export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
 
@@ -143,6 +144,26 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
         const cursor = collection.find(opt.where, options);
         const entries = await cursor.toArray();
         return entries.map(r => this.docToModel(r));
+    }
+
+    /**
+     * 同步表结构和索引
+     * 
+     * @param opt 
+     * @returns 
+     */
+    public async sync(opt: SyncOption = {}) {
+        const collectionOptions = COLLECTION_METADATA[this.m_Model];
+        if (!collectionOptions)
+            return;
+
+        if (opt.group && opt.group != collectionOptions.group)
+            return;
+
+        const collection = await this.m_DbFactory.getCollection(this.m_Opt.srvNo, this.m_Model);
+        for (const r of collectionOptions.indexes) {
+            await collection.createIndex(r.spec, r.options);
+        }
     }
 
     private docToModel(doc: WithId<Document>): T {

@@ -8,6 +8,18 @@ export abstract class DbModel {
 
 export type Action = () => Promise<void> | void;
 
+export type SyncOption = Partial<{
+    /**
+     * 是否强制更新表结构
+     */
+    force: boolean,
+
+    /**
+     * 分区
+     */
+    group: string;
+}>;
+
 /**
  * 工作单元
  */
@@ -100,6 +112,11 @@ export interface IDbRepository<T extends DbModel> {
      * @param opt 查询条件
      */
     findAll(opt?: QueryOption): Promise<T[]>;
+
+    /**
+     * 同步表结构 
+     */
+    sync(opt?: SyncOption): Promise<void>;
 }
 
 /**

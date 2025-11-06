@@ -5,15 +5,19 @@ export type IndexOption = {
     options?: CreateIndexesOptions;
 };
 
-export const INDEX_METADATA: {
-    [group: string]: {
-        [modelName: string]: IndexOption[];
-    };
+export type CollectionOption = {
+    name: string;
+    group: string;
+    comment: string;
+    indexes: IndexOption[];
+};
+
+export const COLLECTION_METADATA: {
+    [modelName: string]: CollectionOption;
 } = {};
 
-export function Collection(option: { name: string; group: string; comment: string; indexes: IndexOption[] }) {
+export function Collection(option: CollectionOption) {
     return (_target: any) => {
-        INDEX_METADATA[option.group] ??= {};
-        INDEX_METADATA[option.group][option.name] = option.indexes;
+        COLLECTION_METADATA[option.name] = option;
     };
 }

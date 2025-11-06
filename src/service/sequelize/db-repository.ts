@@ -1,9 +1,10 @@
-import { FindOptions } from 'sequelize';
+import { FindOptions, ModelStatic } from 'sequelize';
 
 import { SequelizeDbFactory } from './db-factory';
 import { SequelizeUnitOfWork } from './unit-of-work';
 import { ioc } from '../ioc';
-import { BuilderOption, DbModel, IDbRepository, IDType, QueryOption } from '../../contract';
+import { BuilderOption, DbModel, IDbRepository, IDType, QueryOption, SyncOption } from '../../contract';
+import { ModelOptions, TABLE_METADATA } from '../../decorator';
 
 export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T> {
 
@@ -107,5 +108,76 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
         }
         const docs = await dbModel.findAll(options);
         return docs.map(d => d.dataValues) as T[];
+    }
+
+    public async sync(opt: SyncOption = {}) {
+        const tableMetaData = TABLE_METADATA[this.m_Model];
+        if (!tableMetaData)
+            return;
+
+        if (tableMetaData.options.group && tableMetaData.options.group != opt.group)
+            return;
+
+        const model = await this.m_DbFactory.getModel(this.m_Model, this.m_Option.srvNo);
+        if (tableMetaData.options.partitionBy) {
+            if (model.sequelize.getDialect() != 'postgres') {
+                throw new Error(`分区表仅支持PostgreSQL数据库`);
+            }
+            const sqls = this.getCreateTableQuery(model, tableMetaData.options);
+            for (const sql of sqls) {
+                await model.sequelize.query(sql);
+            }
+        } else {
+            await model.sync(opt);
+        }
+    }
+
+    private getCreateTableQuery(model: ModelStatic<any>, option: ModelOptions) {
+        const sqls = [];
+        let createTableSql = `CREATE TABLE IF NOT EXISTS "${model.options.tableName}" (`;
+        const attributes = model.getAttributes();
+        const primaryKeys: string[] = [];
+        for (const key in attributes) {
+            const attribute = attributes[key];
+            createTableSql += `${attribute.field} ${attribute.type}`;
+
+            if (attribute.primaryKey) {
+                primaryKeys.push(attribute.field);
+                if (attribute.autoIncrement || attribute.autoIncrementIdentity) {
+                    // 自增字段处理
+                    createTableSql += ' GENERATED ALWAYS AS IDENTITY';
+                }
+            }
+
+            if (attribute.allowNull === false) {
+                createTableSql += ` NOT NULL`;
+            }
+            if (attribute.defaultValue !== undefined) {
+                const defaultValue = typeof attribute.defaultValue === 'string' ? `'${attribute.defaultValue}'` : attribute.defaultValue;
+                createTableSql += ` DEFAULT ${defaultValue}`;
+            }
+            createTableSql += `,`;
+
+            if (attribute.comment) {
+                sqls.push(`COMMENT ON COLUMN "${model.options.tableName}"."${attribute.field}" IS '${attribute.comment}';`);
+            }
+        }
+        createTableSql += `PRIMARY KEY (${primaryKeys.join(', ')}) )`;
+        if (option.partitionBy.type == 'RANGE') {
+            createTableSql += ` PARTITION BY RANGE (${option.partitionBy.field}) `;
+        } else {
+            throw new Error(`不支持的分区类型[${option.partitionBy.type}]`);
+        }
+        sqls.unshift(createTableSql);
+
+        if (model.options.comment) {
+            sqls.push(`COMMENT ON TABLE "${model.options.tableName}" IS '${model.options.comment}';`);
+        }
+
+        for (const index of model.options.indexes) {
+            sqls.push(`CREATE INDEX IF NOT EXISTS "${index.name}" ON "${model.options.tableName}" (${index.fields.join(', ')});`);
+        }
+
+        return sqls;
     }
 }
