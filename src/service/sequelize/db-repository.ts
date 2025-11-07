@@ -165,6 +165,8 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
         createTableSql += `PRIMARY KEY (${primaryKeys.join(', ')}) )`;
         if (option.partitionBy.type == 'RANGE') {
             createTableSql += ` PARTITION BY RANGE (${option.partitionBy.field}) `;
+        } else if (option.partitionBy.type == 'HASH') {
+            createTableSql += ` PARTITION BY HASH (${option.partitionBy.field}) `;
         } else {
             throw new Error(`不支持的分区类型[${option.partitionBy.type}]`);
         }

@@ -30,18 +30,23 @@ export interface ModelOptions extends _ModelOptions {
          */
         field: string;
         /**
-         * 分区类型，目前仅支持范围分区
+         * 分区类型，目前支持范围分区(RANGE)和哈希分区(HASH)
          */
-        type: 'RANGE';
+        type: 'RANGE' | 'HASH';
         /**
-         * 范围分区时间单位
+         * range分区配置
          */
-        rangeTimeUnit?: 'YEAR' | 'MONTH' | 'DAY';
-        /**
-         * 过期时间
-         * 分区多久之前的要删除掉
-         */
-        expireUnit: ms.StringValue;
+        range?: {
+            timeUnit: 'YEAR' | 'MONTH' | 'DAY';
+            expireTime?: ms.StringValue;
+        };
+        hash?: {
+            /**
+             * 哈希分区模数
+             * 比如要分 100 个分区，模数就设置为 100
+             */
+            modulus: number;
+        };
     }
 }
 
