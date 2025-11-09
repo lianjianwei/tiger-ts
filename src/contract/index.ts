@@ -9,6 +9,7 @@ export * from './log-factory-base';
 export * from './mutex-base';
 export * from './parser-factory-base';
 export * from './pub-sub-base';
+export * from './rpc-base';
 export * from './string-generator-base';
 export * from './thread-base';
 export * from './type';
