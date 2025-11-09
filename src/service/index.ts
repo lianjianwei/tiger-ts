@@ -8,6 +8,7 @@ export * from './log';
 export * from './koa';
 export * from './load-balance';
 export * from './math';
+export * from './memory';
 export * from './mock';
 export * from './mongo';
 export * from './parser';
