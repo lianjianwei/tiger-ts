@@ -42,7 +42,7 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
 
         await this.uow.commit();
     }
-    
+
     public async remove(where: any) {
         this.uow.registerRemove(this.m_Model, where, this.m_Option.srvNo);
         if (this.isTx)
@@ -74,7 +74,7 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
         });
     }
 
-    public async findOne(opt?: QueryOption): Promise<T> {
+    public async findOne(opt: QueryOption = {}): Promise<T> {
         const dbModel = await this.m_DbFactory.getModel(this.m_Model, this.m_Option.srvNo);
         const options: FindOptions = {
             where: opt.where
@@ -92,7 +92,7 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
         return doc?.dataValues as T;
     }
 
-    public async findAll(opt?: QueryOption): Promise<T[]> {
+    public async findAll(opt: QueryOption = {}): Promise<T[]> {
         const dbModel = await this.m_DbFactory.getModel(this.m_Model, this.m_Option.srvNo);
         const options: FindOptions = {
             where: opt.where
