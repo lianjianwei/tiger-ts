@@ -10,7 +10,7 @@ export class SequelizeDbFactory extends DbFactoryBase {
     private m_SrvSequelizeClientMap: {
         [srvNo: number]: Promise<Sequelize>;
     } = {};
-    
+
     private m_UrlSequelizeClientMap: {
         [url: string]: {
             client: Sequelize,
@@ -88,7 +88,7 @@ export class SequelizeDbFactory extends DbFactoryBase {
     public async getModel(name: string, srvNo = 0) {
         const client = await this.getOriginConnection<Sequelize>(srvNo);
         const modelName = srvNo ? `${name}-${srvNo}` : name;
-        const model = client.models[modelName]
+        const model = client.models[modelName];
         if (model)
             return model;
 
@@ -97,7 +97,7 @@ export class SequelizeDbFactory extends DbFactoryBase {
             throw new Error(`Model ${name} not defined.`);
 
         const fields = columnMetadata.reduce((memo, r) => {
-            memo[r.attributeName] = r.option;
+            memo[r.columnName] = r.option;
             return memo;
         }, {});
 
