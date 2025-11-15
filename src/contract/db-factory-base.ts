@@ -10,9 +10,14 @@ export type Action = () => Promise<void> | void;
 
 export type SyncOption = Partial<{
     /**
-     * 是否强制更新表结构
+     * 是否强制更新表结构(DROP TABLE IF EXISTS)
      */
     force: boolean,
+
+    /**
+     * 是否允许表结构变更(ALTER TABLE)
+     */
+    alter: boolean;
 
     /**
      * 分区
@@ -50,7 +55,7 @@ export type QueryOption = Partial<{
     where: any;
     skip: number;
     take: number;
-    order: { field: string; direction: 'asc' | 'desc' }[];
+    order: { field: string; direction: 'asc' | 'desc'; }[];
 }>;
 
 /**
