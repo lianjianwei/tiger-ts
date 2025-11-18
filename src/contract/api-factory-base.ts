@@ -1,6 +1,12 @@
 import Router from '@koa/router';
 import { Files } from 'formidable';
+
+import { ILog } from './log-factory-base';
 import { Type } from './type';
+
+export type BaseState = {
+    log?: ILog;
+};
 
 export type RouterContext<T = any, S = any> = Router.RouterContext<S> & {
     request: Router.RouterContext['request'] & {
