@@ -1,3 +1,4 @@
+import Koa from 'koa';
 import Router from '@koa/router';
 import { Files } from 'formidable';
 
@@ -17,6 +18,10 @@ export type RouterContext<T = any, S = any> = Router.RouterContext<S> & {
 
 export type HttpMethod = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'ALL' | 'HEAD' | 'OPTIONS';
 
+export interface IApiMiddleware {
+    use(ctx: RouterContext, next: Koa.Next): Promise<void>;
+}
+
 export type ApiOption = Partial<{
     /**
      * 支持的方法
@@ -30,6 +35,11 @@ export type ApiOption = Partial<{
      * 是否直接返回api返回的数据，不包装一层{ err: 0, data: any }
      */
     origin: boolean;
+    /**
+     * 中间件
+     * 按顺序执行
+     */
+    middlewares: Type<IApiMiddleware>[];
     /**
      * 其他自定义元数据
      */

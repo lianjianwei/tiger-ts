@@ -2,11 +2,12 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import Koa from 'koa';
 import Router from '@koa/router';
+import Container from 'typedi';
 
 import { KoaOption } from './option';
 import { CustomError } from '../error';
-import { API_METEDATA } from '../../decorator';
 import { ApiFactoryBase } from '../../contract';
+import { API_METEDATA } from '../../decorator';
 import { enum_ } from '../../model';
 
 export function koaRouteOption(apiFactory: ApiFactoryBase): KoaOption {
@@ -14,7 +15,14 @@ export function koaRouteOption(apiFactory: ApiFactoryBase): KoaOption {
         const router = new Router();
 
         for (const [route, data] of Object.entries(API_METEDATA)) {
-            router[data.options.method.toLowerCase()](route, async (ctx: Router.RouterContext) => {
+            const middlewares = (data.options.middlewares || []).map(r => {
+                const middlewareInstance = Container.get(r);
+                return async (ctx: Router.RouterContext, next: Koa.Next) => {
+                    await middlewareInstance.use(ctx, next);
+                }
+            });
+
+            router[data.options.method.toLowerCase()](route, ...middlewares, async (ctx: Router.RouterContext) => {
                 const { api, options } = apiFactory.build(ctx.request.path);
                 if (options.validateType) {
                     const body = plainToInstance(options.validateType, ctx.request.body);
