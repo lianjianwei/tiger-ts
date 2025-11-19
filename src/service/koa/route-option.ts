@@ -18,7 +18,7 @@ export function koaRouteOption(apiFactory: ApiFactoryBase, opt?: Router.RouterOp
             const middlewares = (data.options.middlewares || []).map(r => {
                 const middlewareInstance = Container.get(r);
                 return async (ctx: Router.RouterContext, next: Koa.Next) => {
-                    await middlewareInstance.use(ctx, next);
+                    await middlewareInstance.use(ctx, next, data.options);
                 };
             });
 

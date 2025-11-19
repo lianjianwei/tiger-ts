@@ -19,7 +19,7 @@ export type RouterContext<T = any, S = any> = Router.RouterContext<S> & {
 export type HttpMethod = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'ALL' | 'HEAD' | 'OPTIONS';
 
 export interface IApiMiddleware {
-    use(ctx: RouterContext, next: Koa.Next): Promise<void>;
+    use(ctx: RouterContext, next: Koa.Next, apiOption: ApiOption): Promise<void>;
 }
 
 export type ApiOption = Partial<{
