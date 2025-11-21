@@ -17,7 +17,7 @@ npm i tiger-ts typedi reflect-metadata
 ```
 
 ```
-npm i -D @types/node mocha ts-node typescript
+npm i -D @types/node mocha ts-node typescript @types/koa__router
 ```
 
 3. 配置 tsconfig.json
@@ -69,14 +69,15 @@ index.ts
 ```typescript
 import 'reflect-metadata';
 
+import Router from '@koa/router';
+import { service } from 'tiger-ts';
+
 const logFactory = new service.LogFactory();
 
 new service.KoaApplication(
     [
         (app) => {
-            const router = new Router({
-                prefix: cfg.prefix
-            });
+            const router = new Router();
             router.get('/hello', async (ctx) => {
                 ctx.body = 'hello tiger-ts';
             });
@@ -86,7 +87,7 @@ new service.KoaApplication(
     ],
     logFactory
 ).listen(30000, () => {
-    console.log('服务启动成功，端口: 30000');
+    console.log('服务启动成功 http://127.0.0.1:30000');
 });
 ```
 
