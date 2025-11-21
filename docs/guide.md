@@ -65,7 +65,7 @@ tsconfig.build.json
 
 4. 编写启动脚本
 
-index.ts
+src/index.ts
 ```typescript
 import 'reflect-metadata';
 
@@ -74,7 +74,7 @@ import { service } from 'tiger-ts';
 
 const logFactory = new service.LogFactory();
 
-new service.KoaApplication(
+const app = new service.KoaApplication(
     [
         (app) => {
             const router = new Router();
@@ -86,7 +86,9 @@ new service.KoaApplication(
         }
     ],
     logFactory
-).listen(30000, () => {
+);
+
+app.listen(30000, () => {
     console.log('服务启动成功 http://127.0.0.1:30000');
 });
 ```
@@ -97,7 +99,7 @@ package.json
 ```
 {
     "scripts": {
-        "server": "ts-node index.ts"
+        "server": "ts-node src/index.ts"
     },
     // ......
 }

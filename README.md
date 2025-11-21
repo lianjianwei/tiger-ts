@@ -51,3 +51,5 @@ npm install tiger-ts
 ## 文档
 
 * [引导](./docs/guide.md)
+* [API 文档](./docs/api.md)
+* [中间件](./docs/middleware.md)
