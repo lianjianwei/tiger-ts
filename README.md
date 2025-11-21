@@ -1,5 +1,7 @@
 # tiger-ts
-一个使用TypeScript写的Node.js服务端基础库。
+tiger-ts 是一个框架，用于快速，高效的构建Node.js服务端应用，支持使用 TypeScript 编写。
+
+Http 服务框架使用的是 [koa](https://github.com/koajs/koa)。
 
 ## 功能
 
@@ -45,3 +47,7 @@ npm install tiger-ts
 ## 项目示例
 
 [demo 项目](./examples/demo/README.md)
+
+## 文档
+
+* [引导](./docs/guide.md)
