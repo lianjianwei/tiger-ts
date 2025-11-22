@@ -23,7 +23,7 @@ export function koaRouteOption(apiFactory: ApiFactoryBase, opt?: Router.RouterOp
             });
 
             router[data.options.method.toLowerCase()](route, ...middlewares, async (ctx: Router.RouterContext) => {
-                const { api, options } = apiFactory.build(ctx.request.path);
+                const { api, options } = apiFactory.build(route);
                 if (options.validateType) {
                     const body = plainToInstance(options.validateType, ctx.request.body);
                     const res = await validate(body, {

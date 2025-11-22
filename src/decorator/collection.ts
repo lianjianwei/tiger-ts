@@ -9,7 +9,7 @@ export type CollectionOption = {
     name: string;
     group: string;
     comment: string;
-    indexes: IndexOption[];
+    indexes?: IndexOption[];
 };
 
 export const COLLECTION_METADATA: {
