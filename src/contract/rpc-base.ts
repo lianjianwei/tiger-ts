@@ -18,6 +18,7 @@ export type RpcOption = {
     route: string;
     headers?: Record<string, string>;
     body?: Record<string, any>;
+    throwError?: boolean;
 };
 
 export type RpcResponse<T> = {
