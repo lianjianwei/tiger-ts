@@ -53,6 +53,7 @@
         "reflect-metadata": "^0.2.2",
         "sequelize": "^6.37.7",
         "typedi": "^0.10.0",
+        "uuid": "^13.0.0",
         "yaml": "^2.8.1"
     }
 }
