@@ -84,7 +84,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
         if (where.id)
             where._id ??= where.id;
 
-        return await collection.countDocuments(where);
+        return Object.keys(where).length ? await collection.countDocuments(where) : await collection.estimatedDocumentCount();
     }
 
     public async findOne(opt: QueryOption = {}) {
