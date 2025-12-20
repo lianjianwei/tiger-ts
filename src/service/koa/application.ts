@@ -16,6 +16,10 @@ export class KoaApplication implements IApplication {
         private m_LogFactory: LogFactoryBase
     ) { }
 
+    public getOrigin<T>(): T {
+        return this.m_App as T;
+    }
+
     public async listen(port: number, callback?: () => void) {
         if (this.m_App)
             return;
