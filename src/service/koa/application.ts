@@ -11,26 +11,30 @@ export class KoaApplication implements IApplication {
     private m_App: Koa;
     private m_Server: Server<typeof IncomingMessage, typeof ServerResponse>;
 
+    private m_Listening: boolean = false;
+
     public constructor(
         private m_KoaOptions: KoaOption[],
         private m_LogFactory: LogFactoryBase
-    ) { }
+    ) {
+        this.m_App = new Koa();
+    }
 
     public getOrigin<T>(): T {
         return this.m_App as T;
     }
 
     public async listen(port: number, callback?: () => void) {
-        if (this.m_App)
+        if (this.m_Listening)
             return;
 
         await this.onBefore();
 
-        this.m_App = new Koa();
         for (const r of this.m_KoaOptions)
             r(this.m_App);
 
         this.m_Server = this.m_App.listen(port, callback);
+        this.m_Listening = true;
 
         await this.onAfter();
     }
