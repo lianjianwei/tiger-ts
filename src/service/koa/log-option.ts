@@ -14,6 +14,7 @@ export function koaLogOption(logFactory: LogFactoryBase): KoaOption {
                 .addField('header', ctx.request.header)
                 .addField('ip', ctx.request.ip)
                 .addField('body', ctx.request.body)
+                .addField('query', ctx.request.query)
                 .addField('files', ctx.request.files);
             const beginOn = Date.now();
 
