@@ -22,8 +22,12 @@ export function koaLogOption(logFactory: LogFactoryBase): KoaOption {
                 await next();
 
                 log.addField('timeDiff', (Date.now() - beginOn))
-                    .addField('response', ctx.body)
-                    .debug();
+                if (ctx.state.originResponse) {
+                    log.addField('response', ctx.state.originResponse);
+                } else {
+                    log.addField('response', ctx.body);
+                }
+                log.debug();
             } catch (err) {
                 if (err instanceof CustomError) {
                     ctx.body = {

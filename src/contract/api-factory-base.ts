@@ -7,6 +7,7 @@ import { Type } from './type';
 
 export type BaseState = {
     log?: ILog;
+    originResponse?: any;
 };
 
 export type RouterContext<T = any, S = any> = Router.RouterContext<S> & {
