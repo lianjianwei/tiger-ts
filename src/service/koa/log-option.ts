@@ -5,7 +5,14 @@ import { CustomError } from '../error';
 import { BaseState, LogFactoryBase, RouterContext } from '../../contract';
 import { enum_ } from '../../model';
 
-export function koaLogOption(logFactory: LogFactoryBase): KoaOption {
+export type LogOption = {
+    logFactory: LogFactoryBase;
+    timeout?: number;
+};
+
+export function koaLogOption(logOption: LogOption): KoaOption {
+    const { logFactory } = logOption;
+    logOption.timeout ??= 2000;
     return (app: Koa) => {
         app.use(async (ctx: RouterContext<any, BaseState>, next) => {
             const log = logFactory.build();
@@ -21,7 +28,11 @@ export function koaLogOption(logFactory: LogFactoryBase): KoaOption {
             try {
                 await next();
 
-                log.addField('timeDiff', (Date.now() - beginOn))
+                const timeDiff = Date.now() - beginOn;
+                log.addField('timeDiff', timeDiff);
+                if (timeDiff > logOption.timeout) {
+                    log.addField('timeout', true);
+                }
                 if (ctx.state.originResponse) {
                     log.addField('response', ctx.state.originResponse);
                 } else {
@@ -40,8 +51,12 @@ export function koaLogOption(logFactory: LogFactoryBase): KoaOption {
                         errMsg: (err instanceof Error) ? err.stack : null
                     };
                 }
-                log.addField('timeDiff', (Date.now() - beginOn))
-                    .addField('response', ctx.body)
+                const timeDiff = Date.now() - beginOn;
+                log.addField('timeDiff', timeDiff);
+                if (timeDiff > logOption.timeout) {
+                    log.addField('timeout', true);
+                }
+                log.addField('response', ctx.body)
                     .error(err);
             }
         });
