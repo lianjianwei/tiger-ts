@@ -4,7 +4,7 @@ import Container from 'typedi';
 
 import { KoaOption } from './option';
 import { IApplication, LogFactoryBase } from '../../contract';
-import { APPLICATION_AFTER_EVENT_METADATA, APPLICATION_BEFORE_EVENT_METADATA } from '../../decorator';
+import { APPLICATION_AFTER_EVENT_METADATA, APPLICATION_BEFORE_EVENT_METADATA, APPLICATION_CLOSE_METADATA } from '../../decorator';
 
 export class KoaApplication implements IApplication {
 
@@ -39,10 +39,16 @@ export class KoaApplication implements IApplication {
         await this.onAfter();
     }
 
-    public async close() {
+    public async close(force?: boolean) {
         this.m_Server.close();
         this.m_Server = null;
         this.m_App = null;
+
+        for (const r of APPLICATION_CLOSE_METADATA) {
+            const instance = Container.get(r);
+            if (instance && typeof instance.close === 'function')
+                await instance.close(force);
+        }
     }
 
     private async onBefore() {
