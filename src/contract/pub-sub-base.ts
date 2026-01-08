@@ -10,4 +10,6 @@ export abstract class PubSubBase {
     public abstract publish<T>(channel: string, data: T): Promise<void>;
 
     public abstract unsubscribe<T>(channel: string, subscribe: ISubscribe<T>): Promise<void>;
+
+    public abstract close(): Promise<void>;
 }

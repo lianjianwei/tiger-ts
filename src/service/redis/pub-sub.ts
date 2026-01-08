@@ -82,4 +82,10 @@ export class RedisPubSub extends PubSubBase {
             .addField('unsubscribe', subscribe.name)
             .debug();
     }
+
+    public async close() {
+        await this.m_SubscribeRedis.unsubscribe();
+        this.m_ChannelSubscribeMap = {};
+        await this.m_SubscribeRedis.quit();
+    }
 }
