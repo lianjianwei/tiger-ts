@@ -4,7 +4,7 @@ import { SequelizeDbFactory } from './db-factory';
 import { SequelizeUnitOfWork } from './unit-of-work';
 import { ioc } from '../ioc';
 import { BuilderOption, DbModel, IDbRepository, IDType, QueryOption, SyncOption } from '../../contract';
-import { ModelOptions, TABLE_METADATA } from '../../decorator';
+import { ModelOptions, SequelizeModelIndexOptions, TABLE_METADATA } from '../../decorator';
 
 export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T> {
 
@@ -184,7 +184,11 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
         for (const index of model.options.indexes) {
             // 如果有写name的话，那么索引名称就是 实际表名_name，否则就是 实际表名_字段1_字段2_...
             let indexName = index.name ? `${model.options.tableName}_${index.name}` : `${model.options.tableName}_${index.fields.join('_')}`;
-            sqls.push(`CREATE ${index.unique ? 'UNIQUE' : ''} INDEX ${index.concurrently ? 'CONCURRENTLY' : ''} IF NOT EXISTS "${indexName}" ON "${model.options.tableName}" ${index.using ? 'USING' + index.using : ''} (${index.fields.join(', ')});`);
+            let include = '';
+            if ((index as SequelizeModelIndexOptions).include?.length) {
+                include = ` INCLUDE (${(index as SequelizeModelIndexOptions).include.join(', ')})`;
+            }
+            sqls.push(`CREATE ${index.unique ? 'UNIQUE' : ''} INDEX ${index.concurrently ? 'CONCURRENTLY' : ''} IF NOT EXISTS "${indexName}" ON "${model.options.tableName}" ${index.using ? 'USING' + index.using : ''} (${index.fields.join(', ')}) ${include};`);
         }
 
         return sqls;

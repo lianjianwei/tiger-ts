@@ -1,5 +1,12 @@
 import ms from 'ms';
-import { ModelAttributeColumnOptions, ModelOptions as _ModelOptions } from 'sequelize';
+import { ModelAttributeColumnOptions, ModelIndexesOptions, ModelOptions as _ModelOptions } from 'sequelize';
+
+export type SequelizeModelIndexOptions = ModelIndexesOptions & {
+    /**
+     * POSTGRES 的 include 索引优化
+     */
+    include: string[];
+};
 
 export const COLUMN_METADATA: {
     [modelName: string]: {
@@ -13,10 +20,11 @@ export const TABLE_METADATA: {
     [name: string]: {
         modelName: string;
         options: ModelOptions;
-    }
+    };
 } = {};
 
 export interface ModelOptions extends _ModelOptions {
+    indexes?: SequelizeModelIndexOptions[];
     /**
      * 模型分组
      */
@@ -47,7 +55,7 @@ export interface ModelOptions extends _ModelOptions {
              */
             modulus: number;
         };
-    }
+    };
 }
 
 export function Table(options: ModelOptions) {
