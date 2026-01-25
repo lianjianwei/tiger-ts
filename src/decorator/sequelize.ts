@@ -1,12 +1,12 @@
 import ms from 'ms';
 import { ModelAttributeColumnOptions, ModelIndexesOptions, ModelOptions as _ModelOptions } from 'sequelize';
 
-export type SequelizeModelIndexOptions = ModelIndexesOptions & {
+export type SequelizeModelIndexOptions = ModelIndexesOptions & Partial<{
     /**
      * POSTGRES 的 include 索引优化
      */
     include: string[];
-};
+}>;
 
 export const COLUMN_METADATA: {
     [modelName: string]: {
