@@ -3,7 +3,7 @@ import { Type } from './type';
 export type IDType = string | number;
 
 export abstract class DbModel {
-    public id: IDType;
+    public id?: IDType;
 }
 
 export type Action = () => Promise<void> | void;

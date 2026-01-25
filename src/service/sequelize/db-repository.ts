@@ -182,10 +182,8 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
         }
 
         for (const index of model.options.indexes) {
-            let indexName = index.name ? index.name : `${model.options.tableName}_${index.fields.join('_')}`;
-            if (index.prefix) {
-                indexName = `${index.prefix}${indexName}`;
-            }
+            // 如果有写name的话，那么索引名称就是 实际表名_name，否则就是 实际表名_字段1_字段2_...
+            let indexName = index.name ? `${model.options.tableName}_${index.name}` : `${model.options.tableName}_${index.fields.join('_')}`;
             sqls.push(`CREATE ${index.unique ? 'UNIQUE' : ''} INDEX ${index.concurrently ? 'CONCURRENTLY' : ''} IF NOT EXISTS "${indexName}" ON "${model.options.tableName}" ${index.using ? 'USING' + index.using : ''} (${index.fields.join(', ')});`);
         }
 
