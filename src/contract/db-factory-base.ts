@@ -119,9 +119,14 @@ export interface IDbRepository<T extends DbModel> {
     findAll(opt?: QueryOption): Promise<T[]>;
 
     /**
-     * 同步表结构 
+     * 同步表结构
      */
     sync(opt?: SyncOption): Promise<void>;
+
+    /**
+     * 获得数据库实际表名
+     */
+    getTableName(): Promise<string>;
 }
 
 /**

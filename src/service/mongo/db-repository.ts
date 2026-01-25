@@ -146,6 +146,10 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
         return entries.map(r => this.docToModel(r));
     }
 
+    public async getTableName() {
+        return this.m_Model;
+    }
+
     /**
      * 同步表结构和索引
      * 

@@ -110,6 +110,11 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
         return docs.map(d => d.dataValues) as T[];
     }
 
+    public async getTableName() {
+        const dbModel = await this.m_DbFactory.getModel(this.m_Model, this.m_Option.srvNo);
+        return dbModel.options.tableName;
+    }
+
     public async sync(opt: SyncOption = {}) {
         const tableMetaData = TABLE_METADATA[this.m_Model];
         if (!tableMetaData)
