@@ -46,10 +46,18 @@ export function koaLogOption(logOption: LogOption): KoaOption {
                         errMsg: err.data
                     };
                 } else {
-                    ctx.body = {
-                        err: enum_.ErrorCode.serverInternal,
-                        errMsg: (err instanceof Error) ? err.stack : null
-                    };
+                    if (err.name == 'SequelizeDatabaseError') {
+                        ctx.body = {
+                            err: enum_.ErrorCode.serverInternal,
+                            errMsg: err.message,
+                            errSql: err.sql
+                        };
+                    } else {
+                        ctx.body = {
+                            err: enum_.ErrorCode.serverInternal,
+                            errMsg: (err instanceof Error) ? err.stack : null
+                        };
+                    }
                 }
                 const timeDiff = Date.now() - beginOn;
                 log.addField('timeDiff', timeDiff);
