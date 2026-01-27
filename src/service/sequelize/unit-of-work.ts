@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize';
 
 import { SequelizeDbFactory } from './db-factory';
-import { Action, DbModel, IUnitOfWork } from '../../contract';
+import { Action, DbModel, IDType, IUnitOfWork, SequelizeUpdateOption } from '../../contract';
 
 export class SequelizeUnitOfWork implements IUnitOfWork {
 
@@ -13,7 +13,9 @@ export class SequelizeUnitOfWork implements IUnitOfWork {
         [srvNo: number]: {
             model: string;
             type: 'add' | 'save' | 'remove' | 'bulkAdd';
-            entry?: DbModel;
+            entry?: DbModel | SequelizeUpdateOption;
+            id?: IDType;
+
             entries?: DbModel[];
             where?: any;
         }[]
@@ -56,6 +58,17 @@ export class SequelizeUnitOfWork implements IUnitOfWork {
             model,
             type: 'save',
             entry,
+            id: entry.id
+        });
+    }
+
+    public registerUpdate(model: string, id: IDType, entry: SequelizeUpdateOption, srvNo: number) {
+        this.m_Bulk[srvNo] ??= [];
+        this.m_Bulk[srvNo].push({
+            model,
+            type: 'save',
+            entry,
+            id: id
         });
     }
 
@@ -83,7 +96,7 @@ export class SequelizeUnitOfWork implements IUnitOfWork {
                         } else if (r.type === 'remove') {
                             await dbModel.destroy({ where: r.where, transaction: client });
                         } else if (r.type === 'save') {
-                            await dbModel.update(r.entry as any, { where: { id: r.entry.id }, transaction: client });
+                            await dbModel.update(r.entry as any, { where: { id: r.id }, transaction: client });
                         }
                     }
                     await client.commit();

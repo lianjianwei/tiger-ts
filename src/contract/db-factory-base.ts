@@ -1,3 +1,6 @@
+import { Document, UpdateFilter } from 'mongodb';
+import { Model, ModelStatic } from 'sequelize';
+
 import { Type } from './type';
 
 export type IDType = string | number;
@@ -5,6 +8,10 @@ export type IDType = string | number;
 export abstract class DbModel {
     public id?: IDType;
 }
+
+export type MongoUpdateOption = UpdateFilter<Document>;
+export type SequelizeUpdateOption = ModelStatic<Model<any, any>>;
+export type UpdateOption = MongoUpdateOption | SequelizeUpdateOption;
 
 export type Action = () => Promise<void> | void;
 
@@ -96,6 +103,15 @@ export interface IDbRepository<T extends DbModel> {
      * @param entry 实例
      */
     save(entry: T): Promise<void>;
+
+    /**
+     * 数据库更新操作
+     * 
+     * 可以实现某个字段自增，自增
+     * 
+     * @param entry 实例
+     */
+    updateByID(id: IDType, entry: UpdateOption): Promise<void>;
 
     /**
      * 根据条件查询数量

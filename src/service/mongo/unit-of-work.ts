@@ -1,7 +1,7 @@
 import { AnyBulkWriteOperation, BulkWriteOptions, Document, MongoClient } from 'mongodb';
 
 import { MongoDbFactory } from './db-factory';
-import { Action, DbModel, IUnitOfWork } from '../../contract';
+import { Action, DbModel, IDType, IUnitOfWork, MongoUpdateOption } from '../../contract';
 
 export class MongoUnitOfWork implements IUnitOfWork {
 
@@ -57,6 +57,19 @@ export class MongoUnitOfWork implements IUnitOfWork {
                 update: {
                     $set: doc
                 }
+            }
+        });
+    }
+
+    public registerUpdate(model: string, id: IDType, entry: MongoUpdateOption, srvNo: number) {
+        this.m_Bulk[srvNo] ??= {};
+        this.m_Bulk[srvNo][model] ??= [];
+        this.m_Bulk[srvNo][model].push({
+            updateOne: {
+                filter: {
+                    _id: id as any
+                },
+                update: entry
             }
         });
     }

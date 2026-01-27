@@ -3,7 +3,7 @@ import { FindOptions, ModelStatic } from 'sequelize';
 import { SequelizeDbFactory } from './db-factory';
 import { SequelizeUnitOfWork } from './unit-of-work';
 import { ioc } from '../ioc';
-import { BuilderOption, DbModel, IDbRepository, IDType, QueryOption, SyncOption } from '../../contract';
+import { BuilderOption, DbModel, IDbRepository, IDType, QueryOption, SequelizeUpdateOption, SyncOption } from '../../contract';
 import { ModelOptions, SequelizeModelIndexOptions, TABLE_METADATA } from '../../decorator';
 
 export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T> {
@@ -61,6 +61,14 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
 
     public async save(entry: T): Promise<void> {
         this.uow.registerSave(this.m_Model, entry, this.m_Option.srvNo);
+        if (this.isTx)
+            return;
+
+        await this.uow.commit();
+    }
+
+    public async updateByID(id: IDType, entry: SequelizeUpdateOption): Promise<void> {
+        this.uow.registerUpdate(this.m_Model, id, entry, this.m_Option.srvNo);
         if (this.isTx)
             return;
 
