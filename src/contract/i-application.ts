@@ -1,5 +1,7 @@
+import { IncomingMessage, Server, ServerResponse } from 'http';
+
 export interface IApplication {
-    listen(port: number, callback?: () => void): Promise<void>;
+    listen(port: number, callback?: () => void): Promise<Server<typeof IncomingMessage, typeof ServerResponse>>;
 
     /**
      * 关闭应用

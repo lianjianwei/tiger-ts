@@ -37,6 +37,8 @@ export class KoaApplication implements IApplication {
         this.m_Listening = true;
 
         await this.onAfter();
+
+        return this.m_Server;
     }
 
     public async close(force?: boolean) {
