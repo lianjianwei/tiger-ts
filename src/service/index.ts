@@ -14,6 +14,6 @@ export * from './mongo';
 export * from './parser';
 export * from './redis';
 export * from './sequelize';
-export * from './uuid';
+export * from './string-generator';
 export * from './value';
 export * from './yaml';

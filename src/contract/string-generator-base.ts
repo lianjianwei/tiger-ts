@@ -1,3 +1,3 @@
 export abstract class StringGeneratorBase {
-    public abstract generator(): string;
+    public abstract generator(size?: number): string;
 }
