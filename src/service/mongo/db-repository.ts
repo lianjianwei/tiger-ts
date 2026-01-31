@@ -89,19 +89,22 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
     public async count(where: any = {}) {
         const collection = await this.m_DbFactory.getCollection(this.m_Opt.srvNo, this.m_Model);
 
-        if (where.id)
-            where._id ??= where.id;
+        const _where = Object.assign({}, where);
+        if (_where.id) {
+            _where._id ??= _where.id;
+            delete _where.id;
+        }
 
-        return Object.keys(where).length ? await collection.countDocuments(where) : await collection.estimatedDocumentCount();
+        return Object.keys(_where).length ? await collection.countDocuments(_where) : await collection.estimatedDocumentCount();
     }
 
     public async findOne(opt: QueryOption = {}) {
         const collection = await this.m_DbFactory.getCollection(this.m_Opt.srvNo, this.m_Model);
 
-        if (opt.where?.id && !opt.where._id) {
-            opt.where = Object.assign({}, opt.where);
-            opt.where._id = opt.where.id;
-            delete opt.where.id;
+        const where = Object.assign({}, opt.where ?? {});
+        if (where.id) {
+            where._id ??= where.id;
+            delete where.id;
         }
 
         const options: FindOptions = {};
@@ -120,17 +123,17 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
             }, new Map<string, SortDirection>());
         }
 
-        const doc = await collection.findOne(opt.where, options);
+        const doc = await collection.findOne(where, options);
         return this.docToModel(doc);
     }
 
     public async findAll(opt: QueryOption = {}) {
         const collection = await this.m_DbFactory.getCollection(this.m_Opt.srvNo, this.m_Model);
 
-        if (opt.where?.id && !opt.where._id) {
-            opt.where = Object.assign({}, opt.where);
-            opt.where._id = opt.where.id;
-            delete opt.where.id;
+        const where = Object.assign({}, opt.where ?? {});
+        if (where.id) {
+            where._id ??= where.id;
+            delete where.id;
         }
 
         const options: FindOptions = {};
@@ -149,7 +152,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
             }, new Map<string, SortDirection>());
         }
 
-        const cursor = collection.find(opt.where, options);
+        const cursor = collection.find(where, options);
         const entries = await cursor.toArray();
         return entries.map(r => this.docToModel(r));
     }
