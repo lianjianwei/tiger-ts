@@ -2,6 +2,10 @@ import { Condition, IValueService, OwnValue, Value, ValueHandlerBase } from '../
 
 export class ValueService implements IValueService {
 
+    private m_DiffValue: {
+        [valueType: number]: number;
+    } = {};
+
     public constructor(
         public ownValue: OwnValue,
         private m_ValueHandler?: ValueHandlerBase
@@ -85,17 +89,40 @@ export class ValueService implements IValueService {
 
     public async update(values: Value[]) {
         for (const r of values ?? []) {
-            r.count = Number(r.count);
-            r.valueType = Number(r.valueType);
-            if (isNaN(r.count))
-                throw new Error(`无效的 value: ${JSON.stringify(r)}`);
-            if (isNaN(r.valueType))
-                throw new Error(`无效的 value: ${JSON.stringify(r)}`);
-
-            await this.m_ValueHandler?.updateHandle({
-                value: r,
-                valueService: this
-            });
+            await this.updateOne(r);
         }
+    }
+
+    public async updateOne(value: Value) {
+        value.count = Number(value.count);
+        value.valueType = Number(value.valueType);
+        if (isNaN(value.count))
+            throw new Error(`无效的 value: ${JSON.stringify(value)}`);
+        if (isNaN(value.valueType))
+            throw new Error(`无效的 value: ${JSON.stringify(value)}`);
+
+        const oldCount = this.ownValue[value.valueType] ?? 0;
+        await this.m_ValueHandler?.updateHandle({
+            value: value,
+            valueService: this
+        });
+        const newCount = this.ownValue[value.valueType] ?? 0;
+        if (newCount != oldCount) {
+            this.m_DiffValue[value.valueType] ??= 0;
+            this.m_DiffValue[value.valueType] += newCount - oldCount;
+        }
+    }
+
+    public getDiffValues(flush = false) {
+        const values = Object.entries(this.m_DiffValue).map(([key, value]) => {
+            return {
+                valueType: Number(key),
+                count: value
+            };
+        });
+        if (flush) {
+            this.m_DiffValue = {};
+        }
+        return values;
     }
 }

@@ -49,11 +49,24 @@ export interface IValueService {
      */
     getCount(valueType: number): Promise<number>;
     /**
-     * 更新数据
+     * 更新数据(单条)
      * 
-     * @param values 数值
+     * @param value 数值
+     */
+    updateOne(value: Value): Promise<void>;
+    /**
+     * 更新数据(多条)
+     * 
+     * @param values 数值数组
      */
     update(values: Value[]): Promise<void>;
+
+    /**
+     * 获取差异数值
+     * 
+     * @param flush 是否刷新数据
+     */
+    getDiffValues(flush?: boolean): Value[];
 }
 
 /**
