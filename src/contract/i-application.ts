@@ -1,6 +1,6 @@
 import { IncomingMessage, Server, ServerResponse } from 'http';
 
-export interface IApplication {
+export interface IApplication<TApp> {
     listen(port: number, callback?: () => void): Promise<Server<typeof IncomingMessage, typeof ServerResponse>>;
 
     /**
@@ -17,7 +17,7 @@ export interface IApplication {
      * 获取原始app应用对象
      * 例如 Koa 应用对象
      */
-    getOrigin<T>(): T;
+    getOrigin(): TApp;
 }
 
 export interface IApplicationClose {

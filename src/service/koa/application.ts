@@ -6,7 +6,7 @@ import { KoaOption } from './option';
 import { IApplication, LogFactoryBase } from '../../contract';
 import { APPLICATION_AFTER_EVENT_METADATA, APPLICATION_BEFORE_EVENT_METADATA, APPLICATION_CLOSE_METADATA } from '../../decorator';
 
-export class KoaApplication implements IApplication {
+export class KoaApplication implements IApplication<Koa> {
 
     private m_App: Koa;
     private m_Server: Server<typeof IncomingMessage, typeof ServerResponse>;
@@ -20,8 +20,8 @@ export class KoaApplication implements IApplication {
         this.m_App = new Koa();
     }
 
-    public getOrigin<T>(): T {
-        return this.m_App as T;
+    public getOrigin(): Koa {
+        return this.m_App;
     }
 
     public async listen(port: number, callback?: () => void) {
