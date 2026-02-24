@@ -53,6 +53,10 @@ export class KoaApplication implements IApplication<Koa> {
         }
     }
 
+    public getServer() {
+        return this.m_Server;
+    }
+
     private async onBefore() {
         for (const r of APPLICATION_BEFORE_EVENT_METADATA) {
             const begin = Date.now();

@@ -18,6 +18,11 @@ export interface IApplication<TApp> {
      * 例如 Koa 应用对象
      */
     getOrigin(): TApp;
+
+    /**
+     * 获取 http 服务对象
+     */
+    getServer(): Server<typeof IncomingMessage, typeof ServerResponse>;
 }
 
 export interface IApplicationClose {
