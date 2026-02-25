@@ -98,14 +98,18 @@ export abstract class ValueHandlerBase {
     /**
      * 获取数值处理器
      * 
-     * @param _ctx 上下文
+     * @param ctx 上下文
      */
-    public async getCountHandle(_ctx: ValueHandlerContext) { };
+    public async getCountHandle(ctx: ValueHandlerContext) {
+        await this.next?.getCountHandle(ctx);
+    };
 
     /**
      * 更新处理器
      * 
      * @param _ctx 上下文
      */
-    public async updateHandle(_ctx: ValueHandlerContext) { };
+    public async updateHandle(ctx: ValueHandlerContext) {
+        await this.next?.updateHandle(ctx);
+    };
 }
