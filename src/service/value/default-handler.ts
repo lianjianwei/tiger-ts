@@ -17,6 +17,6 @@ export class DefaultValueHandler extends ValueHandlerBase {
         ctx.valueService.ownValue[ctx.value.valueType] ??= 0;
         ctx.valueService.ownValue[ctx.value.valueType] += ctx.value.count;
 
-        this.next?.updateHandle(ctx);
+        await this.next?.updateHandle(ctx);
     }
 }
