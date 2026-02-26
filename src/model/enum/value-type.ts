@@ -22,7 +22,7 @@ export enum ValueType {
     /**
      * 视频完播次数
      */
-    videoComleteCount = 6,
+    videoCompleteCount = 6,
     /**
      * 今日视频播放次数
      */
@@ -34,11 +34,11 @@ export enum ValueType {
     /**
      * 今日视频完播次数
      */
-    todayVideoComleteCount = 9,
+    todayVideoCompleteCount = 9,
     /**
      * 今日视频完播次数更新时间
      */
-    todayVideoComleteCountUpdateTime = 10,
+    todayVideoCompleteCountUpdateTime = 10,
     /**
      * 今日登录次数
      */
