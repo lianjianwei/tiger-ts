@@ -197,7 +197,9 @@ tiger-ts 的 POST 接口统一使用以下格式：
 
 ## 下一步
 
-- [API 文档](./api.md) — 查看所有模块的完整 API 参考
-- 添加数据库：参考 API 文档中的 MongoDB / Sequelize 章节
-- 添加 Redis 分布式锁：参考 API 文档中的 Mutex 章节
-- 配置 log4js 日志：在 `config.yaml` 中添加 `logConfiguration` 配置
+- [API 定义](./api.md) — 请求体验证、中间件、文件上传、Koa 中间件配置
+- [使用 MongoDB](./database-mongo.md) — 连接数据库，CRUD 操作
+- [使用 Sequelize](./database-sequelize.md) — 连接 MySQL / PostgreSQL
+- [日志](./log.md) — 配置 console 或 log4js 日志
+- [Redis 分布式锁 & 发布订阅](./redis.md) — 分布式锁、消息通知
+- [应用生命周期](./application-lifecycle.md) — 启动前初始化、关闭时释放资源
