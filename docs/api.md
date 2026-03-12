@@ -217,3 +217,68 @@ new service.KoaApplication([
 ```
 
 Redis 中的 key 格式为 `{prefix}:{时间戳}:{name}:{route}`，value 为 hash，field 为请求头中的 `appid`。
+
+## 流式输出（SSE）
+
+适用于 AI 对话等需要逐步推送数据的场景。在 `@Api` 中设置 `stream: true`，`call()` 返回 `Readable` 或 `AsyncIterable`，框架会自动设置 SSE 响应头并将流写入响应。
+
+```typescript
+import { Readable } from 'stream';
+import { IApi, decorator, RouterContext } from 'tiger-ts';
+import { Service } from 'typedi';
+
+const { Api } = decorator;
+
+@Api({ route: '/chat', method: 'POST', stream: true })
+@Service()
+export class ChatApi implements IApi {
+    public async call(ctx: RouterContext): Promise<Readable> {
+        const readable = new Readable({ read() {} });
+
+        // 模拟逐字推送
+        const words = ['Hello', ' ', 'world', '!'];
+        let i = 0;
+        const timer = setInterval(() => {
+            if (i < words.length) {
+                readable.push(words[i++]);
+            } else {
+                readable.push(null); // 结束流
+                clearInterval(timer);
+            }
+        }, 100);
+
+        return readable;
+    }
+}
+```
+
+框架自动设置的响应头：
+
+```
+Content-Type: text/event-stream
+Cache-Control: no-cache
+Connection: keep-alive
+```
+
+### 业务层记录流摘要
+
+流式响应无法在框架层记录响应内容，推荐在业务层将摘要写入 `ctx.state`，日志中间件会在流结束后读取并记录：
+
+```typescript
+@Api({ route: '/chat', method: 'POST', stream: true })
+@Service()
+export class ChatApi implements IApi {
+    public async call(ctx: RouterContext): Promise<Readable> {
+        // 在 ctx.state 上挂载摘要对象
+        const summary = { tokens: 0, model: 'gpt-4o' };
+        ctx.state.streamSummary = summary;
+
+        const stream = aiClient.stream(ctx.request.body.prompt);
+        stream.on('data', () => summary.tokens++);
+
+        return stream;
+    }
+}
+```
+
+日志中间件读取 `ctx.state.streamSummary`（需自行扩展 `koaLogOption` 的 `end` 回调）。

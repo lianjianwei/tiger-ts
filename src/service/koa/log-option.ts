@@ -1,4 +1,5 @@
 import Koa from 'koa';
+import { Stream } from 'stream';
 
 import { KoaOption } from './option';
 import { CustomError } from '../error';
@@ -28,17 +29,30 @@ export function koaLogOption(logOption: LogOption): KoaOption {
             try {
                 await next();
 
-                const timeDiff = Date.now() - beginOn;
-                log.addField('timeDiff', timeDiff);
-                if (timeDiff > logOption.timeout) {
-                    log.addField('timeout', true);
-                }
-                if (ctx.state.originResponse) {
-                    log.addField('response', ctx.state.originResponse);
+                if (ctx.body instanceof Stream) {
+                    // 流式响应：等待流结束后再记录，响应时间为流完全结束的时间
+                    log.addField('response', '[stream]');
+                    ctx.body.on('end', () => {
+                        const timeDiff = Date.now() - beginOn;
+                        log.addField('timeDiff', timeDiff).debug();
+                    });
+                    ctx.body.on('error', (err) => {
+                        const timeDiff = Date.now() - beginOn;
+                        log.addField('timeDiff', timeDiff).error(err);
+                    });
                 } else {
-                    log.addField('response', ctx.body);
+                    const timeDiff = Date.now() - beginOn;
+                    log.addField('timeDiff', timeDiff);
+                    if (timeDiff > logOption.timeout) {
+                        log.addField('timeout', true);
+                    }
+                    if (ctx.state.originResponse) {
+                        log.addField('response', ctx.state.originResponse);
+                    } else {
+                        log.addField('response', ctx.body);
+                    }
+                    log.debug();
                 }
-                log.debug();
             } catch (err) {
                 if (err instanceof CustomError) {
                     ctx.body = {
