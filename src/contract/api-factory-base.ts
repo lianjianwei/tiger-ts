@@ -42,13 +42,18 @@ export type ApiOption = Partial<{
      */
     middlewares: Type<IApiMiddleware>[];
     /**
+     * 是否为流式输出（SSE），适用于 AI 对话等场景
+     * 若为 true，call 方法应返回 Readable 或 AsyncIterable
+     */
+    stream: boolean;
+    /**
      * 其他自定义元数据
      */
     [key: string]: any;
 }>;
 
 export interface IApi<TBody = any, TSession = any> {
-    call(ctx: RouterContext<TBody, TSession>): Promise<any>;
+    call(ctx: RouterContext<TBody, TSession>): Promise<any> | Promise<NodeJS.ReadableStream | AsyncIterable<any>>;
 }
 
 export abstract class ApiFactoryBase {

@@ -33,7 +33,15 @@ export function koaRouteOption(apiFactory: ApiFactoryBase, opt?: Router.RouterOp
                         throw new CustomError(enum_.ErrorCode.invalidParams, res);
                 }
                 const res = await api.call(ctx);
-                if (options.origin) {
+                if (options.stream) {
+                    ctx.set({
+                        'Content-Type': 'text/event-stream',
+                        'Cache-Control': 'no-cache',
+                        'Connection': 'keep-alive',
+                    });
+                    ctx.status = 200;
+                    ctx.body = res as NodeJS.ReadableStream | AsyncIterable<any>;
+                } else if (options.origin) {
                     ctx.body = res;
                 } else {
                     ctx.body = {
