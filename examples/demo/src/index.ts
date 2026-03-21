@@ -13,7 +13,7 @@ import { initIoC } from './service/ioc';
     const apiFactory = new service.ApiFactory();
     const logFactory = Container.get(LogFactoryBase);
 
-    new service.KoaApiPort([
+    new service.KoaApplication([
         service.koaCorsOption(cfg.koaCorsOption),
         service.koaCompressOption(cfg.koaCompressOption),
         service.koaBodyOption(cfg.koaBodyOption),
@@ -28,7 +28,10 @@ import { initIoC } from './service/ioc';
             app.use(router.routes());
             app.use(router.allowedMethods());
         },
-        service.koaPostOption(apiFactory, logFactory),
-        service.koaPortOption(cfg.name, cfg.port, cfg.version)
-    ]).listen();
-})()
+        service.koaLogOption({
+            logFactory: logFactory,
+            timeout: 5000
+        }),
+        service.koaRouteOption(apiFactory)
+    ], logFactory).listen(cfg.port);
+})();

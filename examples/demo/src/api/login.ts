@@ -12,7 +12,10 @@ class LoginRequestBody {
 }
 
 
-@Api({ route: '/login', method: 'POST', validateType: LoginRequestBody })
+@Api('/login', {
+    method: 'POST',
+    validateType: LoginRequestBody
+})
 @Service()
 export class LoginApi implements IApi {
 
