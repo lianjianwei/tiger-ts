@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import { Stream } from 'stream';
+import { DatabaseError, UniqueConstraintError } from 'sequelize';
 
 import { KoaOption } from './option';
 import { CustomError } from '../error';
@@ -60,12 +61,12 @@ export function koaLogOption(logOption: LogOption): KoaOption {
                         errMsg: err.data
                     };
                 } else {
-                    if (err.name == 'SequelizeDatabaseError') {
+                    if (err instanceof DatabaseError || err instanceof UniqueConstraintError) {
                         ctx.body = {
                             err: enum_.ErrorCode.serverInternal,
-                            errMsg: err.message,
-                            errSql: err.sql
+                            errMsg: err.parent.message,
                         };
+                        log.addField('original', err.original);
                     } else {
                         ctx.body = {
                             err: enum_.ErrorCode.serverInternal,
