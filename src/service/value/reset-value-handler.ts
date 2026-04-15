@@ -51,20 +51,20 @@ export class ResetValueHandler extends ValueHandlerBase {
         if (reset) {
             const isReset = await this.isReset(reset, ctx);
             if (isReset) {
-                const timeOffset = ctx.valueService.ownValue[enum_.ValueType.timeOffset] || 0;
-                const now = timeOffset + dayjs().unix();
-                await ctx.valueService.updateOne({
-                    valueType: reset.timeValueType,
-                    count: now
-                });
                 if (reset.countValueType) {
                     ctx.valueService.ownValue[ctx.value.valueType] = await ctx.valueService.getCount(reset.countValueType);
                 } else {
                     ctx.valueService.ownValue[ctx.value.valueType] = reset.fixed ?? 0;
                 }
             }
+            const timeOffset = ctx.valueService.ownValue[enum_.ValueType.timeOffset] || 0;
+            const now = timeOffset + dayjs().unix();
+            await ctx.valueService.updateOne({
+                valueType: reset.timeValueType,
+                count: now
+            });
         }
-        
+
         await this.next?.updateHandle(ctx);
     }
 
