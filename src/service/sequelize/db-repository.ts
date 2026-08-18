@@ -84,43 +84,51 @@ export class SequelizeDbRepository<T extends DbModel> implements IDbRepository<T
 
     public async findOne(opt: QueryOption = {}): Promise<T> {
         const dbModel = await this.m_DbFactory.getModel(this.m_Model, this.m_Option.srvNo);
-        const options: FindOptions = {
-            where: opt.where
-        };
-        if (opt.skip) {
-            options.offset = opt.skip;
-        }
-        if (opt.take) {
-            options.limit = opt.take;
-        }
-        if (opt.order) {
-            options.order = opt.order.map(o => [o.field, o.direction]);
-        }
-        const doc = await dbModel.findOne(options);
+        const doc = await dbModel.findOne(this.buildFindOptions(opt));
         return doc?.dataValues as T;
     }
 
     public async findAll(opt: QueryOption = {}): Promise<T[]> {
         const dbModel = await this.m_DbFactory.getModel(this.m_Model, this.m_Option.srvNo);
-        const options: FindOptions = {
-            where: opt.where
-        };
-        if (opt.skip) {
-            options.offset = opt.skip;
-        }
-        if (opt.take) {
-            options.limit = opt.take;
-        }
-        if (opt.order) {
-            options.order = opt.order.map(o => [o.field, o.direction]);
-        }
-        const docs = await dbModel.findAll(options);
+        const docs = await dbModel.findAll(this.buildFindOptions(opt));
         return docs.map(d => d.dataValues) as T[];
     }
 
     public async getTableName() {
         const dbModel = await this.m_DbFactory.getModel(this.m_Model, this.m_Option.srvNo);
         return dbModel.options.tableName;
+    }
+
+    /**
+     * 构建 Sequelize 查询选项
+     *
+     * @param opt 查询条件
+     */
+    private buildFindOptions(opt: QueryOption): FindOptions {
+        const options: FindOptions = {
+            where: opt.where
+        };
+        if (opt.skip) {
+            options.offset = opt.skip;
+        }
+        if (opt.take) {
+            options.limit = opt.take;
+        }
+        if (opt.order) {
+            options.order = opt.order.map(o => [o.field, o.direction]);
+        }
+
+        if (opt.fields) {
+            // include 作为 attributes 数组（只返回这些字段），exclude 作为 { exclude: [...] }
+            // 注意：include 时 Sequelize 默认不会返回主键字段，需要时需显式声明
+            if ('include' in opt.fields) {
+                options.attributes = opt.fields.include;
+            } else {
+                options.attributes = { exclude: opt.fields.exclude };
+            }
+        }
+
+        return options;
     }
 
     public async sync(opt: SyncOption = {}) {

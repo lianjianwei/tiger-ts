@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import Koa from 'koa';
-import Router from '@koa/router';
+import Router, { RouterOptions, RouterContext } from '@koa/router';
 import Container from 'typedi';
 
 import { KoaOption } from './option';
@@ -10,19 +10,19 @@ import { ApiFactoryBase } from '../../contract';
 import { API_METEDATA } from '../../decorator';
 import { enum_ } from '../../model';
 
-export function koaRouteOption(apiFactory: ApiFactoryBase, opt?: Router.RouterOptions): KoaOption {
+export function koaRouteOption(apiFactory: ApiFactoryBase, opt?: RouterOptions): KoaOption {
     return (app: Koa) => {
         const router = new Router(opt);
 
         for (const [route, data] of Object.entries(API_METEDATA)) {
             const middlewares = (data.options.middlewares || []).map(r => {
                 const middlewareInstance = Container.get(r);
-                return async (ctx: Router.RouterContext, next: Koa.Next) => {
+                return async (ctx: RouterContext, next: Koa.Next) => {
                     await middlewareInstance.use(ctx, next, data.options);
                 };
             });
 
-            router[data.options.method.toLowerCase()](route, ...middlewares, async (ctx: Router.RouterContext) => {
+            router[data.options.method.toLowerCase()](route, ...middlewares, async (ctx: RouterContext) => {
                 const { api, options } = apiFactory.build(route);
                 if (options.validateType) {
                     const body = plainToInstance(options.validateType, ctx.request.body);

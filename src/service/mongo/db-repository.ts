@@ -107,23 +107,7 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
             delete where.id;
         }
 
-        const options: FindOptions = {};
-        if (opt.skip)
-            options.skip = opt.skip;
-        if (opt.take)
-            options.limit = opt.take;
-        if (opt.order) {
-            options.sort = opt.order.reduce((memo, r) => {
-                if (r.direction == 'asc') {
-                    memo.set(r.field, 1);
-                } else {
-                    memo.set(r.field, -1);
-                }
-                return memo;
-            }, new Map<string, SortDirection>());
-        }
-
-        const doc = await collection.findOne(where, options);
+        const doc = await collection.findOne(where, this.buildFindOptions(opt));
         return this.docToModel(doc);
     }
 
@@ -136,6 +120,21 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
             delete where.id;
         }
 
+        const cursor = collection.find(where, this.buildFindOptions(opt));
+        const entries = await cursor.toArray();
+        return entries.map(r => this.docToModel(r));
+    }
+
+    public async getTableName() {
+        return this.m_Model;
+    }
+
+    /**
+     * 构建 Mongo 查询选项
+     *
+     * @param opt 查询条件
+     */
+    private buildFindOptions(opt: QueryOption): FindOptions {
         const options: FindOptions = {};
         if (opt.skip)
             options.skip = opt.skip;
@@ -152,13 +151,21 @@ export class MongoDbRepository<T extends DbModel> implements IDbRepository<T> {
             }, new Map<string, SortDirection>());
         }
 
-        const cursor = collection.find(where, options);
-        const entries = await cursor.toArray();
-        return entries.map(r => this.docToModel(r));
-    }
+        if (opt.fields) {
+            // include 投影为 { 字段: 1 }，exclude 投影为 { 字段: 0 }
+            // 字段名使用模型字段，id 会由 MongoDB 对应到 _id
+            const keys = 'include' in opt.fields ? opt.fields.include : opt.fields.exclude;
+            options.projection = keys.reduce((memo, field) => {
+                if (field == 'id') {
+                    memo['_id'] = 'include' in opt.fields ? 1 : 0;
+                } else {
+                    memo[field] = 'include' in opt.fields ? 1 : 0;
+                }
+                return memo;
+            }, {} as any);
+        }
 
-    public async getTableName() {
-        return this.m_Model;
+        return options;
     }
 
     /**

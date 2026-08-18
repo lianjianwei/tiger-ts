@@ -63,6 +63,21 @@ export type QueryOption = Partial<{
     skip: number;
     take: number;
     order: { field: string; direction: 'asc' | 'desc'; }[];
+
+    /**
+     * 查询字段
+     *
+     * include 与 exclude 互斥，一次只能提供一种：
+     * - include 表示只返回这些字段
+     * - exclude 表示不返回这些字段
+     *
+     * 说明（主键 pass-through 行为）：
+     * - MongoDB 的 include 投影默认仍会返回 _id（即 id），除非显式 exclude 掉
+     * - Sequelize 的 include 默认不会返回主键字段，需要时需显式声明
+     */
+    fields:
+        | { include: string[] }
+        | { exclude: string[] };
 }>;
 
 /**
