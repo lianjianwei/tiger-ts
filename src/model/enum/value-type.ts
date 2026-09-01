@@ -47,4 +47,8 @@ export enum ValueType {
      * 今日登录次数更新时间
      */
     todayLoginCountUpdateTime = 12,
+    /**
+     * 邀请人数
+     */
+    inviteCount = 13,
 }
