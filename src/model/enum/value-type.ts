@@ -51,4 +51,16 @@ export enum ValueType {
      * 邀请人数
      */
     inviteCount = 13,
+    /**
+     * 免广告卡
+     */
+    freeAdCard = 14,
+    /**
+     * 免广告卡累计获得数量
+     */
+    freeAdCardCumNum = 15,
+    /**
+     * 免广告卡累计使用数量
+     */
+    freeAdCardCumUsed = 16,
 }
